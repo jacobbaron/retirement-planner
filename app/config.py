@@ -85,7 +85,7 @@ class Settings(BaseSettings):
 
 def get_settings(env_file: Optional[str] = None) -> Settings:
     """Get application settings instance."""
-    if env_file:
+    if env_file is not None:
         return Settings(_env_file=env_file)
     return Settings()
 
@@ -100,6 +100,12 @@ def get_global_settings() -> Settings:
     if _settings is None:
         _settings = get_settings()
     return _settings
+
+
+def reset_global_settings() -> None:
+    """Reset global settings instance (useful for testing)."""
+    global _settings
+    _settings = None
 
 
 # For backward compatibility

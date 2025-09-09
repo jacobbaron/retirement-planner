@@ -258,8 +258,11 @@ class TestS3StorageService:
         file_path = "nonexistent.txt"
         
         # Mock S3 NoSuchKey error
-        error = Mock()
-        error.response = {"Error": {"Code": "NoSuchKey"}}
+        from botocore.exceptions import ClientError
+        error = ClientError(
+            error_response={'Error': {'Code': 'NoSuchKey', 'Message': 'Not Found'}},
+            operation_name='GetObject'
+        )
         mock_s3_client.get_object.side_effect = error
         
         with pytest.raises(StorageNotFoundError):
@@ -284,8 +287,11 @@ class TestS3StorageService:
         assert s3_storage.file_exists(file_path) is True
         
         # File doesn't exist
-        error = Mock()
-        error.response = {"Error": {"Code": "404"}}
+        from botocore.exceptions import ClientError
+        error = ClientError(
+            error_response={'Error': {'Code': '404', 'Message': 'Not Found'}},
+            operation_name='HeadObject'
+        )
         mock_s3_client.head_object.side_effect = error
         assert s3_storage.file_exists(file_path) is False
     
@@ -294,13 +300,22 @@ class TestS3StorageService:
         file_path = "test/metadata.txt"
         
         # Mock S3 head_object response
+        mock_last_modified = Mock()
+        mock_last_modified.isoformat.return_value = "2023-01-01T00:00:00"
+        
         mock_s3_client.head_object.return_value = {
             "ContentLength": 100,
-            "LastModified": Mock(),
+            "LastModified": mock_last_modified,
             "ContentType": "text/plain",
             "ETag": '"abc123"'
         }
-        mock_s3_client.head_object.return_value["LastModified"].isoformat.return_value = "2023-01-01T00:00:00"
+        
+        # Mock the metadata get_object call to fail (no additional metadata)
+        from botocore.exceptions import ClientError
+        mock_s3_client.get_object.side_effect = ClientError(
+            error_response={'Error': {'Code': 'NoSuchKey', 'Message': 'Not Found'}},
+            operation_name='GetObject'
+        )
         
         metadata = s3_storage.get_file_metadata(file_path)
         assert metadata["size"] == 100
@@ -355,7 +370,7 @@ class TestStorageFactory:
         settings.s3_bucket_name = "test-bucket"
         settings.s3_region_name = "us-west-2"
         
-        with patch('app.storage.s3.boto3.client') as mock_client:
+        with patch('boto3.client') as mock_client:
             mock_client.return_value.head_bucket.return_value = {}
             
             storage = create_storage_service(settings)
