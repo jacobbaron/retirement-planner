@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-3-T1] Time grid & unit system (annual; real vs nominal) (v0.12.0)
 - [EP-3-T2] Mortgage amortization module (v0.13.0)
 - [EP-3-T3] Baseline expenses & lumpy events module (v0.14.0)
+- [EP-3-T4] Account balance evolution module (v0.15.0)
 
 ### Changed
 

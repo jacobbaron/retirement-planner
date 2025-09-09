@@ -31,6 +31,16 @@ from .baseline_expenses import (
     calculate_expense_inflation_impact,
     validate_expense_timing,
 )
+from .account_evolution import (
+    Transaction,
+    AccountBalance,
+    AccountEvolution,
+    AccountEvolutionEngine,
+    create_account_evolution_from_scenario_account,
+    create_account_evolution_engine_from_scenario,
+    calculate_portfolio_return,
+    validate_account_balance_consistency,
+)
 
 __all__ = [
     "Scenario",
@@ -58,4 +68,12 @@ __all__ = [
     "create_expense_engine_from_scenario",
     "calculate_expense_inflation_impact",
     "validate_expense_timing",
+    "Transaction",
+    "AccountBalance",
+    "AccountEvolution",
+    "AccountEvolutionEngine",
+    "create_account_evolution_from_scenario_account",
+    "create_account_evolution_engine_from_scenario",
+    "calculate_portfolio_return",
+    "validate_account_balance_consistency",
 ]
