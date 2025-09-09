@@ -52,9 +52,10 @@ This document outlines how Cursor agents can systematically work through the ret
 - ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
 - ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
 - ✅ **COMPLETED**: EP-3-T6 (Income Engine) - ready for PR
-- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 1/5 tickets completed
+- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 2/5 tickets completed
   - ✅ **COMPLETED**: EP-4-T1 (Random returns generator) - **HIGH PRIORITY FOR MVP**
-  - Next: EP-4-T2 (Correlated draws via covariance) - **HIGH PRIORITY FOR MVP**
+  - ✅ **COMPLETED**: EP-4-T2 (Correlated draws via covariance) - **HIGH PRIORITY FOR MVP**
+  - Next: EP-4-T3 (Portfolio evolution w/ annual rebalance) - **HIGH PRIORITY FOR MVP**
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)

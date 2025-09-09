@@ -9,7 +9,7 @@ from typing import List, Literal, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class AssetClass(BaseModel):
@@ -28,6 +28,8 @@ class AssetClass(BaseModel):
 class RandomReturnsConfig(BaseModel):
     """Configuration for random returns generation."""
 
+    model_config = {"arbitrary_types_allowed": True}
+
     asset_classes: List[AssetClass] = Field(
         ..., min_length=1, description="Asset classes in portfolio"
     )
@@ -37,6 +39,9 @@ class RandomReturnsConfig(BaseModel):
     )
     distribution: Literal["normal", "lognormal"] = Field(
         default="normal", description="Distribution type for returns"
+    )
+    correlation_matrix: Optional[NDArray[np.float64]] = Field(
+        default=None, description="Correlation matrix between asset classes"
     )
     seed: Optional[int] = Field(
         default=None, ge=0, description="Random seed for reproducibility"
@@ -49,6 +54,44 @@ class RandomReturnsConfig(BaseModel):
         total_weight = sum(asset.weight for asset in v)
         if not np.isclose(total_weight, 1.0, atol=1e-6):
             raise ValueError(f"Portfolio weights must sum to 1.0, got {total_weight}")
+        return v
+
+    @field_validator("correlation_matrix")
+    @classmethod
+    def validate_correlation_matrix(
+        cls, v: Optional[NDArray[np.float64]], info: ValidationInfo
+    ) -> Optional[NDArray[np.float64]]:
+        """Validate correlation matrix if provided."""
+        if v is None:
+            return v
+
+        # Get asset classes from the model data
+        asset_classes = info.data.get("asset_classes", [])
+        num_assets = len(asset_classes)
+
+        if v.shape != (num_assets, num_assets):
+            raise ValueError(
+                f"Correlation matrix must be {num_assets}x{num_assets}, got {v.shape}"
+            )
+
+        # Check if matrix is symmetric
+        if not np.allclose(v, v.T, atol=1e-10):
+            raise ValueError("Correlation matrix must be symmetric")
+
+        # Check if diagonal elements are 1.0
+        if not np.allclose(np.diag(v), 1.0, atol=1e-10):
+            raise ValueError("Correlation matrix diagonal elements must be 1.0")
+
+        # Check if matrix is positive definite (required for Cholesky decomposition)
+        try:
+            np.linalg.cholesky(v)
+        except np.linalg.LinAlgError:
+            raise ValueError("Correlation matrix must be positive definite")
+
+        # Check if all correlations are in [-1, 1]
+        if not np.all((v >= -1.0) & (v <= 1.0)):
+            raise ValueError("All correlation values must be between -1 and 1")
+
         return v
 
 
@@ -91,6 +134,23 @@ class RandomReturnsGenerator:
         # Initialize returns array
         returns = np.zeros((num_assets, years, num_paths))
 
+        if self.config.correlation_matrix is not None:
+            # Generate correlated returns using Cholesky decomposition
+            returns = self._generate_correlated_returns()
+        else:
+            # Generate independent returns (original behavior)
+            returns = self._generate_independent_returns()
+
+        return returns
+
+    def _generate_independent_returns(self) -> NDArray[np.float64]:
+        """Generate independent returns for each asset class."""
+        num_assets = len(self.config.asset_classes)
+        years = self.config.years
+        num_paths = self.config.num_paths
+
+        returns = np.zeros((num_assets, years, num_paths))
+
         for i, asset in enumerate(self.config.asset_classes):
             if self.config.distribution == "normal":
                 # Generate normal returns
@@ -111,6 +171,70 @@ class RandomReturnsGenerator:
                 raise ValueError(
                     f"Unsupported distribution: {self.config.distribution}"
                 )
+
+        return returns
+
+    def _generate_correlated_returns(self) -> NDArray[np.float64]:
+        """Generate correlated returns using Cholesky decomposition."""
+        num_assets = len(self.config.asset_classes)
+        years = self.config.years
+        num_paths = self.config.num_paths
+
+        # Get correlation matrix and volatilities
+        corr_matrix = self.config.correlation_matrix
+        if corr_matrix is None:
+            raise ValueError(
+                "Correlation matrix is required for correlated returns generation"
+            )
+
+        volatilities = self.get_volatilities()
+        expected_returns = self.get_expected_returns()
+
+        # Create covariance matrix from correlation matrix and volatilities
+        # Cov[i,j] = Corr[i,j] * Vol[i] * Vol[j]
+        cov_matrix = np.outer(volatilities, volatilities) * corr_matrix
+
+        # Perform Cholesky decomposition
+        try:
+            cholesky_matrix = np.linalg.cholesky(cov_matrix)
+        except np.linalg.LinAlgError as e:
+            raise ValueError(f"Failed to perform Cholesky decomposition: {e}")
+
+        # Generate independent standard normal random variables
+        # Shape: (num_assets, years, num_paths)
+        independent_randoms = np.random.standard_normal((num_assets, years, num_paths))
+
+        # Apply Cholesky transformation to create correlated random variables
+        # For each time step and path, transform independent variables
+        correlated_randoms = np.zeros_like(independent_randoms)
+
+        for t in range(years):
+            for p in range(num_paths):
+                # Get independent random vector for this time/path
+                z = independent_randoms[:, t, p]  # Shape: (num_assets,)
+
+                # Apply Cholesky transformation: Y = L * Z
+                y = cholesky_matrix @ z  # Shape: (num_assets,)
+
+                # Add expected returns
+                correlated_randoms[:, t, p] = expected_returns + y
+
+        # Convert to appropriate distribution if needed
+        if self.config.distribution == "lognormal":
+            # For lognormal, we need to adjust the parameters
+            # The correlated_randoms are already in log space with correct mean/variance
+            returns = np.zeros_like(correlated_randoms)
+            for i, asset in enumerate(self.config.asset_classes):
+                # Adjust for lognormal: mu = log(1 + expected_return) - 0.5 * volatility^2
+                mu = np.log(1 + asset.expected_return) - 0.5 * asset.volatility**2
+                # The Cholesky transformation already gives us the right variance
+                # We just need to adjust the mean
+                returns[i] = mu + (correlated_randoms[i] - expected_returns[i])
+                # Convert to simple returns
+                returns[i] = np.exp(returns[i]) - 1
+        else:
+            # For normal distribution, use the correlated randoms directly
+            returns = correlated_randoms
 
         return returns
 
@@ -156,6 +280,79 @@ def create_three_asset_portfolio() -> List[AssetClass]:
         AssetClass(name="Bonds", expected_return=0.03, volatility=0.06, weight=0.3),
         AssetClass(name="REITs", expected_return=0.06, volatility=0.15, weight=0.2),
     ]
+
+
+def create_default_correlation_matrix(num_assets: int = 2) -> NDArray[np.float64]:
+    """Create a default correlation matrix for common asset classes.
+
+    Args:
+        num_assets: Number of assets (2 for stocks/bonds, 3 for stocks/bonds/REITs)
+
+    Returns:
+        Correlation matrix
+    """
+    if num_assets == 2:
+        # Typical stocks/bonds correlation
+        return np.array([[1.0, -0.2], [-0.2, 1.0]])
+    elif num_assets == 3:
+        # Typical stocks/bonds/REITs correlation
+        return np.array(
+            [
+                [1.0, -0.2, 0.6],  # Stocks vs Bonds, Stocks vs REITs
+                [-0.2, 1.0, 0.1],  # Bonds vs Stocks, Bonds vs REITs
+                [0.6, 0.1, 1.0],  # REITs vs Stocks, REITs vs Bonds
+            ]
+        )
+    else:
+        # For other sizes, create a reasonable default
+        corr_matrix = np.eye(num_assets)
+        # Add some typical correlations
+        for i in range(num_assets):
+            for j in range(i + 1, num_assets):
+                # Default correlation of 0.3 for different asset classes
+                corr_matrix[i, j] = 0.3
+                corr_matrix[j, i] = 0.3
+        return corr_matrix
+
+
+def validate_correlation_accuracy(
+    returns: NDArray[np.float64],
+    target_correlation: NDArray[np.float64],
+    tolerance: float = 0.05,
+) -> Tuple[bool, str]:
+    """
+    Validate that generated returns have correlations close to target values.
+
+    Args:
+        returns: Generated returns array (num_assets, years, num_paths)
+        target_correlation: Target correlation matrix
+        tolerance: Tolerance for correlation validation
+
+    Returns:
+        Tuple of (is_valid, message)
+    """
+    num_assets = returns.shape[0]
+
+    # Calculate empirical correlation matrix
+    # Flatten across years and paths to get all observations
+    empirical_corr = np.corrcoef(returns.reshape(num_assets, -1))
+
+    # Check correlations are within tolerance
+    for i in range(num_assets):
+        for j in range(i + 1, num_assets):
+            empirical_corr_ij = empirical_corr[i, j]
+            target_corr_ij = target_correlation[i, j]
+            diff = abs(empirical_corr_ij - target_corr_ij)
+
+            if diff > tolerance:
+                return (
+                    False,
+                    f"Correlation between assets {i} and {j}: "
+                    f"empirical {empirical_corr_ij:.4f} differs from target "
+                    f"{target_corr_ij:.4f} by {diff:.4f}",
+                )
+
+    return True, "All correlations within tolerance"
 
 
 def validate_returns_statistics(
