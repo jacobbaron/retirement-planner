@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://retirement_user:retirement_pass@db:5432/retirement_planner
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/venv  # Exclude venv from volume mount
+    networks:
+      - retirement-network
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=retirement_planner
+      - POSTGRES_USER=retirement_user
+      - POSTGRES_PASSWORD=retirement_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retirement_user -d retirement_planner"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retirement-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retirement-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  retirement-network:
+    driver: bridge
