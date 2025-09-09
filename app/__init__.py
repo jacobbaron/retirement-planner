@@ -1,27 +1,32 @@
 """Retirement Planner Flask Application Factory."""
 
 import os
+from typing import Optional
+
 from flask import Flask
 
 
-def create_app(config_name=None):
+def create_app(config_name: Optional[str] = None) -> Flask:
     """Create and configure the Flask application.
-    
+
     Args:
         config_name: Configuration name (development, testing, production)
-        
+
     Returns:
         Flask: Configured Flask application instance
     """
     app = Flask(__name__)
-    
+
     # Basic configuration
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
-    app.config['DATABASE_URL'] = os.getenv('DATABASE_URL', 'sqlite:///retirement_planner.db')
-    app.config['REDIS_URL'] = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-    
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
+    app.config["DATABASE_URL"] = os.getenv(
+        "DATABASE_URL", "sqlite:///retirement_planner.db"
+    )
+    app.config["REDIS_URL"] = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
     # Register blueprints
     from app.blueprints.health import health_bp
+
     app.register_blueprint(health_bp)
-    
+
     return app
