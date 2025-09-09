@@ -63,7 +63,7 @@ jobs:
 
     - name: Set up environment variables
       run: |
-        echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_retirement_planner" >> $GITHUB_ENV
+        echo "DB_URL=postgresql://postgres:postgres@localhost:5432/test_retirement_planner" >> $GITHUB_ENV
         echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
         echo "FLASK_ENV=testing" >> $GITHUB_ENV
         echo "SECRET_KEY=test-secret-key-for-ci" >> $GITHUB_ENV
@@ -138,5 +138,5 @@ jobs:
 
     - name: Test Docker container
       run: |
-        docker run --rm -e SECRET_KEY=test-secret-key -e FLASK_ENV=testing -e DATABASE_URL=sqlite:///test.db retirement-planner:test make test || echo "Docker test failed, but continuing..."
+        docker run --rm -e SECRET_KEY=test-secret-key -e FLASK_ENV=testing -e DB_URL=sqlite:///test.db retirement-planner:test make test || echo "Docker test failed, but continuing..."
 # Trigger new CI run
