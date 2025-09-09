@@ -7,7 +7,7 @@ and save them to files for use by other systems.
 
 import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 from .scenario import Scenario
 
@@ -20,16 +20,18 @@ def generate_scenario_schema() -> Dict[str, Any]:
 def save_scenario_schema(output_path: Path) -> None:
     """Save the scenario JSON schema to a file."""
     schema = generate_scenario_schema()
-    
+
     # Add metadata to the schema
-    schema.update({
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "$id": "https://retirement-planner.com/schema/scenario_v0_1.json",
-        "title": "Retirement Planning Scenario Schema v0.1",
-        "description": "Schema for retirement planning scenarios including household, accounts, liabilities, incomes, expenses, policies, market model, and strategy"
-    })
-    
-    with open(output_path, 'w') as f:
+    schema.update(
+        {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "https://retirement-planner.com/schema/scenario_v0_1.json",
+            "title": "Retirement Planning Scenario Schema v0.1",
+            "description": "Schema for retirement planning scenarios including household, accounts, liabilities, incomes, expenses, policies, market model, and strategy",
+        }
+    )
+
+    with open(output_path, "w") as f:
         json.dump(schema, f, indent=2)
 
 

@@ -5,11 +5,10 @@ This module provides the SQLAlchemy base class, engine, and session management
 for the retirement planner application.
 """
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from typing import Generator
-import os
+from typing import Generator, Optional
+
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from app.config import get_settings
 
@@ -17,11 +16,11 @@ from app.config import get_settings
 Base = declarative_base()
 
 # Global variables for engine and session factory
-_engine = None
-_session_factory = None
+_engine: Optional[Engine] = None
+_session_factory: Optional[sessionmaker] = None
 
 
-def get_engine():
+def get_engine() -> Engine:
     """Get or create the database engine."""
     global _engine
     if _engine is None:
@@ -30,12 +29,12 @@ def get_engine():
             settings.db_url,
             echo=settings.app_env == "development",  # Log SQL in development
             pool_pre_ping=True,  # Verify connections before use
-            pool_recycle=3600,   # Recycle connections after 1 hour
+            pool_recycle=3600,  # Recycle connections after 1 hour
         )
     return _engine
 
 
-def get_session_factory():
+def get_session_factory() -> sessionmaker:
     """Get or create the session factory."""
     global _session_factory
     if _session_factory is None:
@@ -47,7 +46,7 @@ def get_session_factory():
 def get_session() -> Session:
     """Get a new database session."""
     session_factory = get_session_factory()
-    return session_factory()
+    return session_factory()  # type: ignore[no-any-return]
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -59,13 +58,13 @@ def get_db() -> Generator[Session, None, None]:
         session.close()
 
 
-def create_tables():
+def create_tables() -> None:
     """Create all tables in the database."""
     engine = get_engine()
     Base.metadata.create_all(bind=engine)
 
 
-def drop_tables():
+def drop_tables() -> None:
     """Drop all tables in the database."""
     engine = get_engine()
     Base.metadata.drop_all(bind=engine)

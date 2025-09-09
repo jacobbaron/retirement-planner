@@ -18,6 +18,16 @@ This rule guides the implementation workflow for all feature development in the 
 
 ## Implementation Workflow
 
+### 0. Auto-fix and Formatting (before coding and before commit)
+```bash
+# Ensure Docker is up
+docker compose up -d
+
+# Auto-fix common issues and format code (idempotent)
+docker compose exec app make autofix || true
+docker compose exec app make format || true
+```
+
 ### 1. Feature Branch Creation
 ```bash
 # Create feature branch with descriptive name
@@ -54,6 +64,10 @@ docker compose exec app curl -f http://localhost:5000/health || echo "Health che
 
 #### C. Run Quality Gates
 ```bash
+# Auto-fix pass first
+docker compose exec app make autofix
+docker compose exec app make format
+
 # Run tests in Docker container
 docker compose exec app make test
 
@@ -65,6 +79,16 @@ docker compose exec app make typecheck
 
 # Check coverage (must be ≥80%)
 docker compose exec app make coverage
+```
+
+#### D. Pre-Commit / Pre-Push Enforcement
+```bash
+# Single command to run all gates (includes coverage)
+docker compose exec app make check || (echo "Quality gates failed" && exit 1)
+
+# Optional: run autofix again after changes
+docker compose exec app make autofix
+docker compose exec app make format
 ```
 
 ### 4. Documentation Updates (REQUIRED - DO BEFORE PR)
@@ -104,6 +128,9 @@ git commit -m "feat: implement EP-X-TY - brief description
 - Added comprehensive tests
 - Updated changelog and workflow documentation
 - All quality gates passed"
+
+# Verify again before pushing
+docker compose exec app make check
 
 # Push feature branch
 git push origin feature/EP-X-TY-short-description

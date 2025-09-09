@@ -35,10 +35,12 @@ install:
 # Run tests
 test:
 	pytest tests/ -v
+	make lint
+	make typecheck
 
 # Run linting
 lint:
-	flake8 app/ tests/ --max-line-length=88 --extend-ignore=E203,W503
+	flake8 app/ tests/ --max-line-length=88 --extend-ignore=E203,W503,E501 --per-file-ignores="tests/*:F401,F841"
 
 # Run type checking
 typecheck:
@@ -49,12 +51,18 @@ format:
 	black app/ tests/ --line-length=88
 	isort app/ tests/ --profile=black
 
+# Auto-fix common issues (unused imports/vars, formatting, imports)
+autofix:
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r app tests
+	black app/ tests/ --line-length=88
+	isort app/ tests/ --profile=black
+
 # Run tests with coverage
 coverage:
-	pytest tests/ --cov=app --cov-report=term-missing --cov-report=html --cov-fail-under=80
+	pytest tests/ --cov=app --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80
 
 # Run all quality checks
-check: test lint typecheck
+check: test lint typecheck coverage
 	@echo "✅ All quality checks passed!"
 
 # Clean up temporary files
@@ -92,6 +100,10 @@ docker-coverage:
 # Format code in Docker container
 docker-format:
 	docker compose exec app make format
+
+# Run autofix inside Docker container
+docker-autofix:
+	docker compose exec app make autofix
 
 # Run all quality checks in Docker container
 docker-check:

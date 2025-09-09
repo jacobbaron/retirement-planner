@@ -1,5 +1,6 @@
 """Tests for Docker setup verification."""
 
+import os
 import subprocess
 import time
 
@@ -21,6 +22,10 @@ def test_docker_compose_up():
             pytest.skip("Docker not available")
     except (subprocess.TimeoutExpired, FileNotFoundError):
         pytest.skip("Docker not available")
+
+    # Skip in CI runners to avoid port conflicts (5432 may be in use)
+    if os.environ.get("CI") == "true":
+        pytest.skip("Skipping docker compose test in CI environment")
 
     # If we get here, Docker is available
     # Start services

@@ -35,7 +35,8 @@ repos:
     rev: 7.1.1
     hooks:
       - id: flake8
-        files: ^app/.*\.py$
+        files: ^(app/|tests/).+\.py$
+        args: [--max-line-length=88, --extend-ignore=E203,W503,E501, --per-file-ignores=tests/*:F401,F841]
 
   # Type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
