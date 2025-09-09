@@ -1,5 +1,6 @@
 """Retirement Planner Flask Application Factory."""
 
+import os
 from flask import Flask
 
 
@@ -15,7 +16,9 @@ def create_app(config_name=None):
     app = Flask(__name__)
     
     # Basic configuration
-    app.config['SECRET_KEY'] = 'dev-secret-key'  # Will be overridden by env config in EP-1-T3
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
+    app.config['DATABASE_URL'] = os.getenv('DATABASE_URL', 'sqlite:///retirement_planner.db')
+    app.config['REDIS_URL'] = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
     
     # Register blueprints
     from app.blueprints.health import health_bp

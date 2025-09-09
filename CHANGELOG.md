@@ -39,6 +39,13 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - When releases are created, the `[Unreleased]` section will be moved to a version number (e.g., `[1.0.0]`)
 
 **Development Environment:**
-- For EP-1-T1 through EP-1-T4: Work locally first, then ensure Docker compatibility in EP-1-T5
+- EP-1-T1: Work locally to establish foundation ✅ **COMPLETED**
+- EP-1-T5: Set up Docker environment ✅ **COMPLETED**
+- EP-1-T2: Add local development tooling (pytest, coverage, black, isort, flake8/ruff, mypy) 🔄 **NEXT**
 - Starting with EP-1-T5: All development should use Docker (`docker compose up -d`)
 - All testing, linting, and type checking should be done in the Docker environment
+
+**Updated Sequencing Strategy:**
+- **Phase 1**: Foundation (EP-1-T1, EP-1-T5, EP-1-T2, EP-1-T4, EP-1-T3)
+- **Phase 2-4**: Core functionality and features
+- **Phase 6**: CI/CD & DevOps (moved from Phase 5 to after basic functionality)
