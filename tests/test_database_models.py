@@ -12,7 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database.base import get_session, create_tables, drop_tables
-from app.database.models import User, Scenario, Run, LedgerRow
+from app.database.models import User, VersionedScenario, Run, LedgerRow
 from app.models.scenario import Scenario as PydanticScenario, Household, Accounts, Liabilities, Incomes, Expenses, Policies, MarketModel, Strategy
 
 
@@ -102,11 +102,13 @@ class TestDatabaseModels:
     
     def test_scenario_creation(self, db_session, sample_user, sample_scenario_data):
         """Test creating a scenario."""
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-1",
             user_id=sample_user.id,
             name="My Retirement Plan",
             description="A test retirement scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
@@ -121,16 +123,18 @@ class TestDatabaseModels:
     
     def test_scenario_user_relationship(self, db_session, sample_user, sample_scenario_data):
         """Test the relationship between scenarios and users."""
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-2",
             user_id=sample_user.id,
             name="Test Scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
         
         # Test relationship from user to scenarios
-        user_scenarios = db_session.query(Scenario).filter(Scenario.user_id == sample_user.id).all()
+        user_scenarios = db_session.query(VersionedScenario).filter(VersionedScenario.user_id == sample_user.id).all()
         assert len(user_scenarios) == 1
         assert user_scenarios[0].name == "Test Scenario"
         
@@ -141,10 +145,12 @@ class TestDatabaseModels:
     def test_run_creation(self, db_session, sample_user, sample_scenario_data):
         """Test creating a run."""
         # First create a scenario
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-3",
             user_id=sample_user.id,
             name="Test Scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
@@ -152,7 +158,7 @@ class TestDatabaseModels:
         
         # Create a run
         run = Run(
-            scenario_id=scenario.id,
+            versioned_scenario_id=scenario.id,
             status="pending",
             run_type="monte_carlo",
             num_simulations=1000
@@ -162,7 +168,7 @@ class TestDatabaseModels:
         db_session.refresh(run)
         
         assert run.id is not None
-        assert run.scenario_id == scenario.id
+        assert run.versioned_scenario_id == scenario.id
         assert run.status == "pending"
         assert run.run_type == "monte_carlo"
         assert run.num_simulations == 1000
@@ -170,10 +176,12 @@ class TestDatabaseModels:
     
     def test_run_status_constraint(self, db_session, sample_user, sample_scenario_data):
         """Test that run status must be valid."""
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-constraint",
             user_id=sample_user.id,
             name="Test Scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
@@ -181,7 +189,7 @@ class TestDatabaseModels:
         
         # Test invalid status
         run = Run(
-            scenario_id=scenario.id,
+            versioned_scenario_id=scenario.id,
             status="invalid_status"
         )
         db_session.add(run)
@@ -191,17 +199,19 @@ class TestDatabaseModels:
     def test_ledger_row_creation(self, db_session, sample_user, sample_scenario_data):
         """Test creating ledger rows."""
         # Create scenario and run
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-ledger",
             user_id=sample_user.id,
             name="Test Scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
         db_session.refresh(scenario)
         
         run = Run(
-            scenario_id=scenario.id,
+            versioned_scenario_id=scenario.id,
             status="completed"
         )
         db_session.add(run)
@@ -232,17 +242,19 @@ class TestDatabaseModels:
     
     def test_ledger_row_constraints(self, db_session, sample_user, sample_scenario_data):
         """Test ledger row constraints."""
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-constraints",
             user_id=sample_user.id,
             name="Test Scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
         db_session.refresh(scenario)
         
         run = Run(
-            scenario_id=scenario.id,
+            versioned_scenario_id=scenario.id,
             status="completed"
         )
         db_session.add(run)
@@ -280,10 +292,12 @@ class TestDatabaseModels:
     def test_cascade_deletes(self, db_session, sample_user, sample_scenario_data):
         """Test that cascade deletes work properly."""
         # Create scenario
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="test-scenario-cascade",
             user_id=sample_user.id,
             name="Test Scenario",
-            scenario_data=sample_scenario_data.model_dump()
+            scenario_data=sample_scenario_data.model_dump(),
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
@@ -291,7 +305,7 @@ class TestDatabaseModels:
         
         # Create run
         run = Run(
-            scenario_id=scenario.id,
+            versioned_scenario_id=scenario.id,
             status="completed"
         )
         db_session.add(run)
@@ -331,7 +345,7 @@ class TestDatabaseModels:
         db_session.commit()
         
         # Check that run is deleted
-        remaining_runs = db_session.query(Run).filter(Run.scenario_id == scenario.id).all()
+        remaining_runs = db_session.query(Run).filter(Run.versioned_scenario_id == scenario.id).all()
         assert len(remaining_runs) == 0
         
         # Delete the user - should cascade to scenarios
@@ -339,7 +353,7 @@ class TestDatabaseModels:
         db_session.commit()
         
         # Check that scenario is deleted
-        remaining_scenarios = db_session.query(Scenario).filter(Scenario.user_id == sample_user.id).all()
+        remaining_scenarios = db_session.query(VersionedScenario).filter(VersionedScenario.user_id == sample_user.id).all()
         assert len(remaining_scenarios) == 0
     
     def test_indexes_exist(self, db_session):
@@ -353,10 +367,12 @@ class TestDatabaseModels:
         db_session.commit()
         db_session.refresh(user)
         
-        scenario = Scenario(
+        scenario = VersionedScenario(
+            scenario_id="index-test-scenario",
             user_id=user.id,
             name="Index Test Scenario",
-            scenario_data={}
+            scenario_data={},
+            version="0.1"
         )
         db_session.add(scenario)
         db_session.commit()
@@ -366,7 +382,7 @@ class TestDatabaseModels:
         users_by_email = db_session.query(User).filter(User.email == "index@example.com").all()
         assert len(users_by_email) == 1
         
-        scenarios_by_user = db_session.query(Scenario).filter(Scenario.user_id == user.id).all()
+        scenarios_by_user = db_session.query(VersionedScenario).filter(VersionedScenario.user_id == user.id).all()
         assert len(scenarios_by_user) == 1
     
     def test_pydantic_integration(self, db_session, sample_user):
@@ -395,10 +411,12 @@ class TestDatabaseModels:
         )
         
         # Store in database
-        db_scenario = Scenario(
+        db_scenario = VersionedScenario(
+            scenario_id="pydantic-test-scenario",
             user_id=sample_user.id,
             name="Pydantic Test",
-            scenario_data=pydantic_scenario.model_dump()
+            scenario_data=pydantic_scenario.model_dump(),
+            version="0.1"
         )
         db_session.add(db_scenario)
         db_session.commit()
