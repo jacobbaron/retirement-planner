@@ -16,7 +16,7 @@ This document outlines how Cursor agents can systematically work through the ret
 ## Current Status (Updated: Latest)
 - **Phase 1 (Foundation)**: ✅ **COMPLETED** - All infrastructure tickets done
 - **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 2/4 tickets completed
-  - Next: EP-2-T3 (Scenario versioning) - waiting for EP-2-T2 to be unblocked
+  - Next: EP-2-T3 (Scenario versioning) - ready for implementation
   - In Review: EP-2-T4 (Storage backend) - PR #100 pending
 - **Phase 3+**: ⏳ **WAITING** - Dependencies not yet met
 
@@ -297,7 +297,7 @@ gh issue list --label "phase:2" --state open --exclude-label "status:in-progress
 # Current Phase 2 status:
 # - EP-2-T1: ✅ COMPLETED (PR #87)
 # - EP-2-T2: ✅ COMPLETED (PR #101) 
-# - EP-2-T3: 🔄 NEXT (waiting for EP-2-T2 unblock)
+# - EP-2-T3: 🔄 NEXT (ready for implementation)
 # - EP-2-T4: 🔄 IN REVIEW (PR #100)
 
 # If Phase 2 is complete, check Phase 3
