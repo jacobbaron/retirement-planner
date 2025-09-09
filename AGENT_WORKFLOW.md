@@ -46,11 +46,12 @@ This document outlines how Cursor agents can systematically work through the ret
   - ✅ **COMPLETED**: EP-2-T4 (Storage backend) - PR #100
   - 🔄 **BLOCKED**: EP-2-T3 (Scenario versioning) - low priority
 - **Phase 3 (Simulation Engines)**: ✅ **COMPLETED** - All tickets completed
-  - ✅ **COMPLETED**: EP-3-T1 (Time grid & unit system) - ready for PR
-  - ✅ **COMPLETED**: EP-3-T2 (Mortgage amortization module) - ready for PR
-  - ✅ **COMPLETED**: EP-3-T3 (Baseline expenses & lumpy events) - ready for PR
-  - ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
-  - ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
+- ✅ **COMPLETED**: EP-3-T1 (Time grid & unit system) - ready for PR
+- ✅ **COMPLETED**: EP-3-T2 (Mortgage amortization module) - ready for PR
+- ✅ **COMPLETED**: EP-3-T3 (Baseline expenses & lumpy events) - ready for PR
+- ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
+- ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
+- ✅ **COMPLETED**: EP-3-T6 (Income Engine) - ready for PR
 - **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 0/5 tickets completed
   - Next: EP-4-T1 (Random returns generator)
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
@@ -81,6 +82,7 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-3-T3: Baseline expenses & lumpy events ✅ **COMPLETED**
 - EP-3-T4: Account balance evolution (taxable/trad/Roth) ✅ **COMPLETED**
 - EP-3-T5: Social Security stub (fixed input benefit) ✅ **COMPLETED**
+- EP-3-T6: Income Engine (salary growth, bonuses, other income) ✅ **COMPLETED**
 - EP-4-T1: Random returns generator (normal/lognormal selectable)
 - EP-4-T2: Correlated draws via covariance (Cholesky)
 - EP-4-T3: Portfolio evolution w/ annual rebalance

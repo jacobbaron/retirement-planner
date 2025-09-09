@@ -48,6 +48,21 @@ from .social_security import (
     validate_social_security_timing,
     calculate_social_security_present_value,
 )
+from .income_engine import (
+    IncomeCategory,
+    EmploymentIncome,
+    SelfEmploymentIncome,
+    BusinessIncome,
+    InvestmentIncome,
+    RentalIncome,
+    RetirementIncome,
+    VariableIncome,
+    IncomeChangeEvent,
+    IncomeEngine,
+    create_income_engine_from_scenario,
+    validate_income_timing,
+    calculate_income_present_value,
+)
 
 __all__ = [
     "Scenario",
@@ -88,4 +103,17 @@ __all__ = [
     "create_social_security_engine_from_scenario",
     "validate_social_security_timing",
     "calculate_social_security_present_value",
+    "IncomeCategory",
+    "EmploymentIncome",
+    "SelfEmploymentIncome",
+    "BusinessIncome",
+    "InvestmentIncome",
+    "RentalIncome",
+    "RetirementIncome",
+    "VariableIncome",
+    "IncomeChangeEvent",
+    "IncomeEngine",
+    "create_income_engine_from_scenario",
+    "validate_income_timing",
+    "calculate_income_present_value",
 ]
