@@ -22,6 +22,10 @@ This rule enforces testing and validation requirements to ensure code quality an
 All tests must pass before any code can be merged.
 
 ```bash
+# Auto-fix/format prior to running tests
+docker compose exec app make autofix || true
+docker compose exec app make format || true
+
 # Run all tests in Docker container
 docker compose exec app make test
 
@@ -46,6 +50,10 @@ docker compose exec app python -m pytest --cov=app
 Code must pass all linting checks.
 
 ```bash
+# Auto-fix/format first
+docker compose exec app make autofix || true
+docker compose exec app make format || true
+
 # Run linting in Docker container
 docker compose exec app make lint
 
@@ -124,6 +132,7 @@ gh run view [RUN_ID]
 
 Before creating any pull request, verify:
 
+- [ ] **Auto-fix/format run** (`docker compose exec app make autofix && docker compose exec app make format`)
 - [ ] **All tests pass** (`docker compose exec app make test`)
 - [ ] **Linting passes** (`docker compose exec app make lint`)
 - [ ] **Type checking passes** (`docker compose exec app make typecheck`)

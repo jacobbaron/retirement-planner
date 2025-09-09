@@ -24,6 +24,7 @@ This rule ensures agents follow these essential startup steps and core principle
 - **Always use Docker** for development environment: `docker compose up -d`
 - **Run all commands in containers**: `docker compose exec app make [command]`
 - **Never work directly on host** - All development happens inside Docker containers
+- **Auto-fix and format regularly**: `docker compose exec app make autofix && docker compose exec app make format`
 
 ### 3. Pull Request Workflow
 - **NEVER merge directly to main** - Always create pull requests
@@ -83,6 +84,7 @@ Based on @AGENT_WORKFLOW.md:
 ## Quality Gates
 
 Every implementation must pass:
+- [ ] Auto-fix/format run (`docker compose exec app make autofix && docker compose exec app make format`)
 - [ ] All tests pass (`docker compose exec app make test`)
 - [ ] Linting passes (`docker compose exec app make lint`)
 - [ ] Type checking passes (`docker compose exec app make typecheck`)
