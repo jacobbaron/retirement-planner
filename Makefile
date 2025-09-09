@@ -1,7 +1,7 @@
 # Retirement Planner Development Makefile
 # This Makefile provides common development tasks for the retirement planner project
 
-.PHONY: help install test lint typecheck format coverage check clean docker-up docker-down docker-test docker-check
+.PHONY: help install test lint typecheck format coverage check clean docker-up docker-down docker-test docker-check pre-commit-install pre-commit-run pre-commit-update
 
 # Default target
 help:
@@ -15,6 +15,11 @@ help:
 	@echo "  make coverage    - Run tests with coverage report"
 	@echo "  make check       - Run all quality checks (test + lint + typecheck)"
 	@echo "  make clean       - Clean up temporary files"
+	@echo ""
+	@echo "Pre-commit Commands:"
+	@echo "  make pre-commit-install - Install pre-commit hooks"
+	@echo "  make pre-commit-run     - Run pre-commit hooks on all files"
+	@echo "  make pre-commit-update  - Update pre-commit hooks to latest versions"
 	@echo ""
 	@echo "Docker Commands:"
 	@echo "  make docker-up   - Start Docker development environment"
@@ -91,3 +96,13 @@ docker-format:
 # Run all quality checks in Docker container
 docker-check:
 	docker compose exec app make check
+
+# Pre-commit hooks
+pre-commit-install:
+	pre-commit install
+
+pre-commit-run:
+	pre-commit run --all-files
+
+pre-commit-update:
+	pre-commit autoupdate

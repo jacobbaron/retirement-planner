@@ -366,5 +366,3 @@ class Evaluator:
 3. Add 60/40 Monte Carlo with multivariate normal; charts + scenario compare.
 4. Implement mortgage + SS + baseline expenses.
 5. Ship Quick Plan → iterate into V2 features.
-
-
