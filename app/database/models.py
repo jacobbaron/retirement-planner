@@ -28,38 +28,10 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
     # Relationships
-    scenarios = relationship("Scenario", back_populates="user", cascade="all, delete-orphan")
+    versioned_scenarios = relationship("VersionedScenario", back_populates="user", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', name='{self.name}')>"
-
-
-class Scenario(Base):
-    """Scenario model for storing retirement planning scenarios."""
-    
-    __tablename__ = 'scenarios'
-    
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
-    name = Column(String(255), nullable=False)
-    description = Column(Text)
-    scenario_data = Column(JSONB, nullable=False)  # Stores the Pydantic model as JSON
-    version = Column(String(50), default='0.1', nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    
-    # Relationships
-    user = relationship("User", back_populates="scenarios")
-    runs = relationship("Run", back_populates="scenario", cascade="all, delete-orphan")
-    
-    # Indexes
-    __table_args__ = (
-        Index('idx_scenarios_user_created', 'user_id', 'created_at'),
-        Index('idx_scenarios_name', 'name'),
-    )
-    
-    def __repr__(self):
-        return f"<Scenario(id={self.id}, user_id={self.user_id}, name='{self.name}')>"
 
 
 class Run(Base):
@@ -68,7 +40,7 @@ class Run(Base):
     __tablename__ = 'runs'
     
     id = Column(Integer, primary_key=True, index=True)
-    scenario_id = Column(Integer, ForeignKey('scenarios.id', ondelete='CASCADE'), nullable=False, index=True)
+    versioned_scenario_id = Column(Integer, ForeignKey('versioned_scenarios.id', ondelete='CASCADE'), nullable=False, index=True)
     status = Column(String(50), nullable=False, default='pending', index=True)
     run_type = Column(String(50), nullable=False, default='monte_carlo')  # monte_carlo, deterministic, historical
     num_simulations = Column(Integer, default=10000)
@@ -79,7 +51,7 @@ class Run(Base):
     completed_at = Column(DateTime)
     
     # Relationships
-    scenario = relationship("Scenario", back_populates="runs")
+    versioned_scenario = relationship("VersionedScenario", back_populates="runs")
     ledger_rows = relationship("LedgerRow", back_populates="run", cascade="all, delete-orphan")
     
     # Constraints
@@ -87,12 +59,12 @@ class Run(Base):
         CheckConstraint("status IN ('pending', 'running', 'completed', 'failed')", name='ck_run_status'),
         CheckConstraint("run_type IN ('monte_carlo', 'deterministic', 'historical')", name='ck_run_type'),
         CheckConstraint("num_simulations > 0", name='ck_num_simulations_positive'),
-        Index('idx_runs_scenario_status', 'scenario_id', 'status'),
+        Index('idx_runs_scenario_status', 'versioned_scenario_id', 'status'),
         Index('idx_runs_created', 'created_at'),
     )
     
     def __repr__(self):
-        return f"<Run(id={self.id}, scenario_id={self.scenario_id}, status='{self.status}')>"
+        return f"<Run(id={self.id}, versioned_scenario_id={self.versioned_scenario_id}, status='{self.status}')>"
 
 
 class LedgerRow(Base):
@@ -128,3 +100,36 @@ class LedgerRow(Base):
     
     def __repr__(self):
         return f"<LedgerRow(id={self.id}, run_id={self.run_id}, year={self.year}, account='{self.account_name}', type='{self.transaction_type}', amount={self.amount})>"
+
+
+class VersionedScenario(Base):
+    """Simple versioned scenario model that stores full copies."""
+    
+    __tablename__ = 'versioned_scenarios'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    scenario_id = Column(String(255), unique=True, nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+    name = Column(String(255), nullable=False)
+    description = Column(Text)
+    scenario_data = Column(JSONB, nullable=False)  # Full scenario copy
+    parent_version_id = Column(Integer, ForeignKey('versioned_scenarios.id', ondelete='SET NULL'), nullable=True, index=True)
+    version = Column(String(50), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    
+    # Relationships
+    user = relationship("User")
+    parent_version = relationship("VersionedScenario", remote_side=[id], backref="child_versions")
+    runs = relationship("Run", back_populates="versioned_scenario", cascade="all, delete-orphan")
+    
+    # Indexes
+    __table_args__ = (
+        Index('idx_versioned_scenarios_scenario_id', 'scenario_id'),
+        Index('idx_versioned_scenarios_user_created', 'user_id', 'created_at'),
+        Index('idx_versioned_scenarios_parent_version', 'parent_version_id'),
+        Index('idx_versioned_scenarios_name', 'name'),
+    )
+    
+    def __repr__(self):
+        return f"<VersionedScenario(id={self.id}, scenario_id='{self.scenario_id}', name='{self.name}', version='{self.version}')>"
