@@ -5,7 +5,7 @@ from flask import Blueprint, Response, jsonify
 health_bp = Blueprint("health", __name__)
 
 
-@health_bp.route("/healthz")  # type: ignore[misc]
+@health_bp.route("/healthz")
 def health_check() -> Response:
     """Health check endpoint.
 
