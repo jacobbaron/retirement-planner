@@ -13,22 +13,29 @@
 ## Overview
 This document outlines how Cursor agents can systematically work through the retirement planner tickets in the correct order, creating pull requests for each implementation.
 
+## Current Status (Updated: Latest)
+- **Phase 1 (Foundation)**: ✅ **COMPLETED** - All infrastructure tickets done
+- **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 2/4 tickets completed
+  - Next: EP-2-T3 (Scenario versioning) - ready for implementation
+  - In Review: EP-2-T4 (Storage backend) - PR #100 pending
+- **Phase 3+**: ⏳ **WAITING** - Dependencies not yet met
+
 ## Ticket Sequencing Strategy
 
-### Phase 1: Foundation (Must be completed first)
+### Phase 1: Foundation (Must be completed first) ✅ **COMPLETED**
 **Order 1-5**: Core infrastructure that everything else depends on
 - EP-1-T1: Create repo scaffold (Flask app factory, blueprints, config) ✅ **COMPLETED**
 - EP-1-T5: Dockerfile & dev docker-compose ✅ **COMPLETED**
-- EP-1-T2: Add tooling (pytest, coverage, black, isort, flake8/ruff, mypy) 🔄 **NEXT**
-- EP-1-T4: Makefile & pre-commit hooks
-- EP-1-T3: Config management via `.env` and Pydantic Settings
+- EP-1-T2: Add tooling (pytest, coverage, black, isort, flake8/ruff, mypy) ✅ **COMPLETED**
+- EP-1-T4: Makefile & pre-commit hooks ✅ **COMPLETED**
+- EP-1-T3: Config management via `.env` and Pydantic Settings ✅ **COMPLETED**
 
-### Phase 2: Core Data & Engine (Parallel after foundation)
+### Phase 2: Core Data & Engine (Parallel after foundation) 🔄 **IN PROGRESS**
 **Order 6-12**: Data models and basic engine components
-- EP-2-T1: Define JSON schema v0.1 for Scenario
-- EP-2-T2: SQLAlchemy models (User, Scenario, Run, LedgerRow)
-- EP-2-T3: Scenario versioning & immutable base+diff
-- EP-2-T4: Storage backend
+- EP-2-T1: Define JSON schema v0.1 for Scenario ✅ **COMPLETED**
+- EP-2-T2: SQLAlchemy models (User, Scenario, Run, LedgerRow) ✅ **COMPLETED**
+- EP-2-T3: Scenario versioning & immutable base+diff 🔄 **NEXT**
+- EP-2-T4: Storage backend 🔄 **IN REVIEW** (PR #100)
 - EP-3-T1: Time grid & unit system (annual; real vs nominal)
 - EP-3-T2: Mortgage amortization module
 - EP-3-T3: Baseline expenses & lumpy events
@@ -133,25 +140,49 @@ For each ticket:
    - **Run linting in container**: `docker compose exec app make lint`
    - **Run type checking in container**: `docker compose exec app make typecheck`
 
-3. **Update changelog**:
+3. **Update documentation** (REQUIRED - DO BEFORE PR):
+   
+   **A. Update CHANGELOG.md:**
    ```bash
-   # Add entry to CHANGELOG.md
-   echo "## [Unreleased]" >> CHANGELOG.md
-   echo "### Added" >> CHANGELOG.md
-   echo "- [EP-X-TY] Brief description of what was implemented" >> CHANGELOG.md
-   echo "" >> CHANGELOG.md
+   # Add entry to CHANGELOG.md under [Unreleased] section
+   # Format: - [EP-X-TY] Brief description of what was implemented (vX.Y.Z)
+   # Example: - [EP-2-T2] SQLAlchemy models - User, Scenario, Run, LedgerRow (v0.7.0)
    ```
+   
+   **B. Update AGENT_WORKFLOW.md:**
+   ```bash
+   # 1. Mark the completed ticket with ✅ **COMPLETED**
+   # 2. Update "Next" indicators to point to the next available ticket
+   # 3. Update current status section at the top
+   # 4. Update development notes in CHANGELOG.md if needed
+   ```
+   
+   **Documentation Update Checklist:**
+   - [ ] Added changelog entry with proper format
+   - [ ] Marked ticket as completed in workflow document
+   - [ ] Updated "Next" indicators
+   - [ ] Updated current status section
+   - [ ] Updated development notes if applicable
 
 4. **Create pull request** (REQUIRED - DO NOT SKIP):
    ```bash
    git add .
-   git commit -m "feat: implement EP-X-TY - brief description"
+   git commit -m "feat: implement EP-X-TY - brief description
+
+   - Implemented all acceptance criteria
+   - Added comprehensive tests
+   - Updated changelog and workflow documentation
+   - All quality gates passed"
    git push origin feature/EP-X-TY-short-description
    gh pr create --title "EP-X-TY: Ticket Title" --body "Implements EP-X-TY
 
    **Acceptance Criteria**: [Copy from ticket]
    **Tests**: [Copy from ticket]
    **Dependencies**: [Copy from ticket]
+
+   **Documentation Updates**:
+   - Updated CHANGELOG.md with new entry
+   - Updated AGENT_WORKFLOW.md status and next indicators
 
    Closes #[issue-number]"
    ```
@@ -169,7 +200,7 @@ For each ticket:
    - Created feature branch: feature/EP-X-TY-short-description
    - Implemented all acceptance criteria
    - Added tests as specified
-   - Updated changelog
+   - Updated changelog and workflow documentation
    - Created PR: #[PR_NUMBER]
 
    🤖 Agent waiting for human review and merge."
@@ -204,7 +235,7 @@ After PR is merged:
    - All acceptance criteria met
    - Tests implemented and passing
    - Code reviewed and merged in PR #[pr-number]
-   - Changelog updated
+   - Changelog and workflow documentation updated
 
    🤖 **Agent Status**: Ready for next ticket in sequence."
    ```
@@ -260,13 +291,16 @@ docker compose --version
 
 To find the next ticket, run these commands in order:
 ```bash
-# Check Phase 1 (foundation) first - exclude tickets already in progress
-gh issue list --label "phase:1" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
-
-# If Phase 1 is empty, check Phase 2
+# Phase 1 is complete, so check Phase 2 first
 gh issue list --label "phase:2" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
 
-# Continue through phases until you find open tickets
+# Current Phase 2 status:
+# - EP-2-T1: ✅ COMPLETED (PR #87)
+# - EP-2-T2: ✅ COMPLETED (PR #101) 
+# - EP-2-T3: 🔄 NEXT (ready for implementation)
+# - EP-2-T4: 🔄 IN REVIEW (PR #100)
+
+# If Phase 2 is complete, check Phase 3
 gh issue list --label "phase:3" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
 gh issue list --label "phase:4" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
 gh issue list --label "phase:5" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
@@ -293,6 +327,9 @@ To implement a ticket:
 - Write the specified tests
 - Ensure all tests pass: `docker compose exec app make test` (or `make test` for early tickets)
 - Run linting: `docker compose exec app make lint` (or `make lint` for early tickets)
+- **Update documentation BEFORE creating PR**:
+  - Add changelog entry to CHANGELOG.md
+  - Update AGENT_WORKFLOW.md status and "Next" indicators
 - Create a pull request
 
 Do not proceed to the next ticket until the current PR is merged.
@@ -308,6 +345,7 @@ Each implementation must pass:
 - [ ] Acceptance criteria met
 - [ ] Dependencies satisfied
 - [ ] Docker environment working (`docker compose up -d` and health check passes)
+- [ ] **Documentation updated** (CHANGELOG.md and AGENT_WORKFLOW.md)
 
 ## Error Handling
 
@@ -325,6 +363,44 @@ The agent should maintain a simple log:
 [Date] EP-1-T2: ✅ Completed (PR #Y)
 [Date] EP-1-T3: 🔄 In Progress (PR #Z)
 [Date] EP-1-T4: ⏳ Waiting for dependencies
+```
+
+## Documentation Maintenance
+
+**CRITICAL**: Agents must keep documentation up to date as part of every implementation. This ensures the workflow remains accurate and helpful for future agents.
+
+### Required Documentation Updates
+
+**Before creating any PR, agents must:**
+
+1. **Update CHANGELOG.md**:
+   - Add entry under `[Unreleased]` section
+   - Use format: `- [EP-X-TY] Brief description (vX.Y.Z)`
+   - Increment version number appropriately
+
+2. **Update AGENT_WORKFLOW.md**:
+   - Mark completed ticket with ✅ **COMPLETED**
+   - Update "Next" indicators to point to next available ticket
+   - Update current status section at the top
+   - Update development notes if applicable
+
+3. **Verify accuracy**:
+   - Ensure all status indicators are correct
+   - Check that dependencies are properly marked
+   - Confirm phase completion status
+
+### Documentation Update Process
+
+```bash
+# 1. Update CHANGELOG.md
+# Add entry under [Unreleased] section with proper format
+
+# 2. Update AGENT_WORKFLOW.md
+# Mark ticket as completed and update status indicators
+
+# 3. Commit documentation changes with implementation
+git add CHANGELOG.md AGENT_WORKFLOW.md
+git commit -m "docs: update changelog and workflow status for EP-X-TY"
 ```
 
 ## Changelog Management
