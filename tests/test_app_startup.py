@@ -27,22 +27,21 @@ class TestAppStartup:
             assert "postgresql://retirement_user:retirement_password@" in app.config["DATABASE_URL"]
             assert app.config["REDIS_URL"] == "redis://redis:6379/0"
 
-    @pytest.mark.skip(reason="Test requires complex mocking of global settings - skipping for CI")
     def test_app_creation_fails_without_secret_key(self):
         """Test that app creation fails when SECRET_KEY is missing."""
         # Reset global settings to allow environment patching
         reset_global_settings()
         
         with patch.dict(os.environ, {}, clear=True):
-            with patch('app.get_global_settings') as mock_get_settings:
-                # Mock the settings to raise ValidationError when SECRET_KEY is missing
-                mock_get_settings.side_effect = Exception("SECRET_KEY validation failed")
-                
-                with pytest.raises(Exception) as exc_info:
-                    create_app()
-                
-                # Should raise a ValidationError from Pydantic
-                assert "SECRET_KEY" in str(exc_info.value)
+            # Create a new Settings instance that will fail validation
+            from pydantic import ValidationError
+            with pytest.raises(ValidationError) as exc_info:
+                # This should fail because SECRET_KEY is required
+                from app.config import Settings
+                Settings(_env_file=None)
+            
+            # Should raise a ValidationError from Pydantic
+            assert "SECRET_KEY" in str(exc_info.value)
 
     def test_app_creation_fails_with_placeholder_secret_key(self):
         """Test that app creation fails with placeholder SECRET_KEY."""
