@@ -17,9 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-1-T2] Development tooling (pytest, coverage, black, isort, flake8, mypy) (v0.2.0)
 - [EP-1-T4] Makefile & pre-commit hooks (v0.3.0)
 - [EP-1-T3] Config management via .env and Pydantic Settings (v0.4.0)
-- [EP-2-T1] Define JSON schema v0.1 for Scenario (v0.5.0)
-- [EP-2-T2] SQLAlchemy models - User, Scenario, Run, LedgerRow (v0.6.0)
-- [EP-2-T4] S3/local storage for exports & run artifacts (v0.7.0)
+- [EP-1-T5] Dockerfile & dev docker-compose (v0.5.0)
+- [EP-2-T1] Define JSON schema v0.1 for Scenario (v0.6.0)
+- [EP-2-T2] SQLAlchemy models - User, Scenario, Run, LedgerRow (v0.7.0)
+- [EP-2-T4] S3/local storage for exports & run artifacts (v0.8.0)
 
 ### Changed
 
@@ -51,9 +52,10 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - EP-1-T4: Makefile & pre-commit hooks ✅ **COMPLETED**
 - EP-1-T3: Config management via `.env` and Pydantic Settings ✅ **COMPLETED**
 - **Phase 1 Foundation Complete** 🎉
-- EP-2-T1: Define JSON schema v0.1 for Scenario ✅ **COMPLETED**
-- EP-2-T2: SQLAlchemy models - User, Scenario, Run, LedgerRow ✅ **COMPLETED**
-- EP-2-T4: S3/local storage for exports & run artifacts ✅ **COMPLETED**
+- EP-2-T1: Define JSON schema v0.1 for Scenario ✅ **COMPLETED** (PR #87)
+- EP-2-T2: SQLAlchemy models - User, Scenario, Run, LedgerRow ✅ **COMPLETED** (PR #101)
+- EP-2-T4: S3/local storage for exports & run artifacts 🔄 **IN REVIEW** (PR #100)
+- EP-2-T3: Scenario versioning & immutable base+diff 🔄 **NEXT** (waiting for EP-2-T2 unblock)
 - Starting with EP-1-T5: All development should use Docker (`docker compose up -d`)
 - All testing, linting, and type checking should be done in the Docker environment
 
