@@ -4,7 +4,7 @@ services:
   app:
     build: .
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://retirement_user:retirement_pass@db:5432/retirement_planner

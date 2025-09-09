@@ -23,7 +23,7 @@ sleep 10
 
 # Test health endpoint
 echo "🔍 Testing health endpoint..."
-if curl -f http://localhost:5000/healthz; then
+if curl -f http://localhost:5001/healthz; then
     echo "✅ Health endpoint is working"
 else
     echo "❌ Health endpoint failed"

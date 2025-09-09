@@ -20,8 +20,8 @@ This document describes the Docker development environment for the retirement pl
    ```
 
 3. **Access the application:**
-   - Flask app: http://localhost:5000
-   - Health endpoint: http://localhost:5000/healthz
+   - Flask app: http://localhost:5001
+   - Health endpoint: http://localhost:5001/healthz
    - PostgreSQL: localhost:5432
    - Redis: localhost:6379
 
