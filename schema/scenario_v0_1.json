@@ -1,0 +1,1754 @@
+{
+  "$defs": {
+    "Accounts": {
+      "description": "All financial accounts and assets.",
+      "properties": {
+        "taxable": {
+          "description": "Taxable investment accounts",
+          "items": {
+            "$ref": "#/$defs/TaxableAccount"
+          },
+          "title": "Taxable",
+          "type": "array"
+        },
+        "traditional_401k": {
+          "description": "Traditional 401(k) accounts",
+          "items": {
+            "$ref": "#/$defs/Traditional401kAccount"
+          },
+          "title": "Traditional 401K",
+          "type": "array"
+        },
+        "roth_401k": {
+          "description": "Roth 401(k) accounts",
+          "items": {
+            "$ref": "#/$defs/Roth401kAccount"
+          },
+          "title": "Roth 401K",
+          "type": "array"
+        },
+        "traditional_ira": {
+          "description": "Traditional IRA accounts",
+          "items": {
+            "$ref": "#/$defs/TraditionalIRAAccount"
+          },
+          "title": "Traditional Ira",
+          "type": "array"
+        },
+        "roth_ira": {
+          "description": "Roth IRA accounts",
+          "items": {
+            "$ref": "#/$defs/RothIRAAccount"
+          },
+          "title": "Roth Ira",
+          "type": "array"
+        },
+        "hsa": {
+          "description": "Health Savings Accounts",
+          "items": {
+            "$ref": "#/$defs/HSAAccount"
+          },
+          "title": "Hsa",
+          "type": "array"
+        },
+        "college_529": {
+          "description": "529 college savings accounts",
+          "items": {
+            "$ref": "#/$defs/College529Account"
+          },
+          "title": "College 529",
+          "type": "array"
+        },
+        "cash": {
+          "$ref": "#/$defs/CashAccounts",
+          "description": "Cash and cash equivalents"
+        }
+      },
+      "title": "Accounts",
+      "type": "object"
+    },
+    "AssetAllocation": {
+      "description": "Asset allocation for investment accounts.",
+      "properties": {
+        "stocks": {
+          "description": "Stock allocation (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Stocks",
+          "type": "number"
+        },
+        "bonds": {
+          "description": "Bond allocation (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Bonds",
+          "type": "number"
+        },
+        "cash": {
+          "description": "Cash allocation (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Cash",
+          "type": "number"
+        }
+      },
+      "required": [
+        "stocks",
+        "bonds",
+        "cash"
+      ],
+      "title": "AssetAllocation",
+      "type": "object"
+    },
+    "AutoLoan": {
+      "description": "Auto loan information.",
+      "properties": {
+        "name": {
+          "description": "Loan name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current loan balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "interest_rate": {
+          "description": "Interest rate (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Interest Rate",
+          "type": "number"
+        },
+        "term_months": {
+          "description": "Loan term in months",
+          "maximum": 120,
+          "minimum": 1,
+          "title": "Term Months",
+          "type": "integer"
+        },
+        "monthly_payment": {
+          "description": "Monthly payment amount",
+          "minimum": 0.0,
+          "title": "Monthly Payment",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "interest_rate",
+        "term_months",
+        "monthly_payment"
+      ],
+      "title": "AutoLoan",
+      "type": "object"
+    },
+    "CashAccounts": {
+      "description": "Cash and cash equivalent accounts.",
+      "properties": {
+        "checking": {
+          "default": 0,
+          "description": "Checking account balance",
+          "minimum": 0.0,
+          "title": "Checking",
+          "type": "number"
+        },
+        "savings": {
+          "default": 0,
+          "description": "Savings account balance",
+          "minimum": 0.0,
+          "title": "Savings",
+          "type": "number"
+        },
+        "cds": {
+          "default": 0,
+          "description": "Certificate of deposit balance",
+          "minimum": 0.0,
+          "title": "Cds",
+          "type": "number"
+        },
+        "money_market": {
+          "default": 0,
+          "description": "Money market account balance",
+          "minimum": 0.0,
+          "title": "Money Market",
+          "type": "number"
+        }
+      },
+      "title": "CashAccounts",
+      "type": "object"
+    },
+    "Child": {
+      "description": "Child information for household planning.",
+      "properties": {
+        "birth_year": {
+          "description": "Year of birth",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Birth Year",
+          "type": "integer"
+        },
+        "college_start_year": {
+          "description": "Year college starts",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "College Start Year",
+          "type": "integer"
+        },
+        "college_type": {
+          "default": "public",
+          "description": "Type of college",
+          "enum": [
+            "public",
+            "private",
+            "community"
+          ],
+          "title": "College Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "birth_year",
+        "college_start_year"
+      ],
+      "title": "Child",
+      "type": "object"
+    },
+    "College529Account": {
+      "description": "529 college savings account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        },
+        "beneficiary": {
+          "description": "Name of child beneficiary",
+          "title": "Beneficiary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation",
+        "beneficiary"
+      ],
+      "title": "College529Account",
+      "type": "object"
+    },
+    "Correlations": {
+      "description": "Correlation matrix between asset classes.",
+      "properties": {
+        "stocks_bonds": {
+          "default": 0.2,
+          "description": "Stocks-Bonds correlation",
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Stocks Bonds",
+          "type": "number"
+        },
+        "stocks_cash": {
+          "default": 0.0,
+          "description": "Stocks-Cash correlation",
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Stocks Cash",
+          "type": "number"
+        },
+        "bonds_cash": {
+          "default": 0.1,
+          "description": "Bonds-Cash correlation",
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Bonds Cash",
+          "type": "number"
+        }
+      },
+      "title": "Correlations",
+      "type": "object"
+    },
+    "CreditCard": {
+      "description": "Credit card debt information.",
+      "properties": {
+        "name": {
+          "description": "Credit card name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "interest_rate": {
+          "description": "Interest rate (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Interest Rate",
+          "type": "number"
+        },
+        "minimum_payment": {
+          "description": "Minimum monthly payment",
+          "minimum": 0.0,
+          "title": "Minimum Payment",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "interest_rate",
+        "minimum_payment"
+      ],
+      "title": "CreditCard",
+      "type": "object"
+    },
+    "DisabilityInsurance": {
+      "description": "Disability insurance policy information.",
+      "properties": {
+        "person": {
+          "description": "Insured person",
+          "enum": [
+            "primary",
+            "spouse"
+          ],
+          "title": "Person",
+          "type": "string"
+        },
+        "monthly_benefit": {
+          "description": "Monthly benefit amount",
+          "minimum": 0.0,
+          "title": "Monthly Benefit",
+          "type": "number"
+        },
+        "annual_premium": {
+          "description": "Annual premium amount",
+          "minimum": 0.0,
+          "title": "Annual Premium",
+          "type": "number"
+        },
+        "elimination_period": {
+          "default": 90,
+          "description": "Days before benefits begin",
+          "minimum": 0,
+          "title": "Elimination Period",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "person",
+        "monthly_benefit",
+        "annual_premium"
+      ],
+      "title": "DisabilityInsurance",
+      "type": "object"
+    },
+    "ExpectedReturns": {
+      "description": "Expected annual returns by asset class.",
+      "properties": {
+        "stocks": {
+          "description": "Expected annual stock return",
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Stocks",
+          "type": "number"
+        },
+        "bonds": {
+          "description": "Expected annual bond return",
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Bonds",
+          "type": "number"
+        },
+        "cash": {
+          "description": "Expected annual cash return",
+          "maximum": 1.0,
+          "minimum": -1.0,
+          "title": "Cash",
+          "type": "number"
+        }
+      },
+      "required": [
+        "stocks",
+        "bonds",
+        "cash"
+      ],
+      "title": "ExpectedReturns",
+      "type": "object"
+    },
+    "Expenses": {
+      "description": "All expense categories and projections.",
+      "properties": {
+        "housing": {
+          "$ref": "#/$defs/HousingExpenses",
+          "description": "Housing-related expenses"
+        },
+        "transportation": {
+          "$ref": "#/$defs/TransportationExpenses",
+          "description": "Transportation expenses"
+        },
+        "healthcare": {
+          "$ref": "#/$defs/HealthcareExpenses",
+          "description": "Healthcare expenses"
+        },
+        "food": {
+          "default": 0,
+          "description": "Monthly food expenses",
+          "minimum": 0.0,
+          "title": "Food",
+          "type": "number"
+        },
+        "entertainment": {
+          "default": 0,
+          "description": "Monthly entertainment expenses",
+          "minimum": 0.0,
+          "title": "Entertainment",
+          "type": "number"
+        },
+        "travel": {
+          "default": 0,
+          "description": "Annual travel expenses",
+          "minimum": 0.0,
+          "title": "Travel",
+          "type": "number"
+        },
+        "education": {
+          "default": 0,
+          "description": "Annual education expenses (for children)",
+          "minimum": 0.0,
+          "title": "Education",
+          "type": "number"
+        },
+        "other": {
+          "default": 0,
+          "description": "Monthly other expenses",
+          "minimum": 0.0,
+          "title": "Other",
+          "type": "number"
+        },
+        "lumpy_expenses": {
+          "description": "One-time or irregular expenses",
+          "items": {
+            "$ref": "#/$defs/LumpyExpense"
+          },
+          "title": "Lumpy Expenses",
+          "type": "array"
+        }
+      },
+      "title": "Expenses",
+      "type": "object"
+    },
+    "HSAAccount": {
+      "description": "Health Savings Account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation"
+      ],
+      "title": "HSAAccount",
+      "type": "object"
+    },
+    "HealthcareExpenses": {
+      "description": "Healthcare expenses.",
+      "properties": {
+        "insurance": {
+          "default": 0,
+          "description": "Monthly health insurance premium",
+          "minimum": 0.0,
+          "title": "Insurance",
+          "type": "number"
+        },
+        "out_of_pocket": {
+          "default": 0,
+          "description": "Annual out-of-pocket healthcare costs",
+          "minimum": 0.0,
+          "title": "Out Of Pocket",
+          "type": "number"
+        },
+        "medicare": {
+          "default": 0,
+          "description": "Monthly Medicare premium (when applicable)",
+          "minimum": 0.0,
+          "title": "Medicare",
+          "type": "number"
+        }
+      },
+      "title": "HealthcareExpenses",
+      "type": "object"
+    },
+    "Household": {
+      "description": "Household composition and demographics.",
+      "properties": {
+        "primary_age": {
+          "description": "Age of primary household member",
+          "maximum": 100,
+          "minimum": 18,
+          "title": "Primary Age",
+          "type": "integer"
+        },
+        "spouse_age": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 18,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Age of spouse (null if single)",
+          "title": "Spouse Age"
+        },
+        "filing_status": {
+          "description": "Tax filing status",
+          "enum": [
+            "single",
+            "married_filing_jointly",
+            "married_filing_separately",
+            "head_of_household",
+            "qualifying_widow"
+          ],
+          "title": "Filing Status",
+          "type": "string"
+        },
+        "state": {
+          "description": "State of residence (2-letter code)",
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "State",
+          "type": "string"
+        },
+        "children": {
+          "description": "List of children in household",
+          "items": {
+            "$ref": "#/$defs/Child"
+          },
+          "title": "Children",
+          "type": "array"
+        }
+      },
+      "required": [
+        "primary_age",
+        "filing_status",
+        "state"
+      ],
+      "title": "Household",
+      "type": "object"
+    },
+    "HousingExpenses": {
+      "description": "Housing-related expenses.",
+      "properties": {
+        "mortgage_payment": {
+          "default": 0,
+          "description": "Monthly mortgage payment",
+          "minimum": 0.0,
+          "title": "Mortgage Payment",
+          "type": "number"
+        },
+        "property_tax": {
+          "default": 0,
+          "description": "Annual property tax",
+          "minimum": 0.0,
+          "title": "Property Tax",
+          "type": "number"
+        },
+        "home_insurance": {
+          "default": 0,
+          "description": "Annual home insurance",
+          "minimum": 0.0,
+          "title": "Home Insurance",
+          "type": "number"
+        },
+        "hoa_fees": {
+          "default": 0,
+          "description": "Annual HOA fees",
+          "minimum": 0.0,
+          "title": "Hoa Fees",
+          "type": "number"
+        },
+        "maintenance": {
+          "default": 0,
+          "description": "Annual maintenance costs",
+          "minimum": 0.0,
+          "title": "Maintenance",
+          "type": "number"
+        },
+        "utilities": {
+          "default": 0,
+          "description": "Monthly utilities",
+          "minimum": 0.0,
+          "title": "Utilities",
+          "type": "number"
+        }
+      },
+      "title": "HousingExpenses",
+      "type": "object"
+    },
+    "Incomes": {
+      "description": "All income sources and projections.",
+      "properties": {
+        "salary": {
+          "description": "Salary income by person",
+          "items": {
+            "$ref": "#/$defs/Salary"
+          },
+          "title": "Salary",
+          "type": "array"
+        },
+        "social_security": {
+          "description": "Social Security benefits",
+          "items": {
+            "$ref": "#/$defs/SocialSecurity"
+          },
+          "title": "Social Security",
+          "type": "array"
+        },
+        "pension": {
+          "description": "Pension income",
+          "items": {
+            "$ref": "#/$defs/Pension"
+          },
+          "title": "Pension",
+          "type": "array"
+        },
+        "other": {
+          "description": "Other income sources",
+          "items": {
+            "$ref": "#/$defs/OtherIncome"
+          },
+          "title": "Other",
+          "type": "array"
+        }
+      },
+      "title": "Incomes",
+      "type": "object"
+    },
+    "Liabilities": {
+      "description": "All debts and liabilities.",
+      "properties": {
+        "mortgages": {
+          "description": "Mortgage loans",
+          "items": {
+            "$ref": "#/$defs/Mortgage"
+          },
+          "title": "Mortgages",
+          "type": "array"
+        },
+        "student_loans": {
+          "description": "Student loan debt",
+          "items": {
+            "$ref": "#/$defs/StudentLoan"
+          },
+          "title": "Student Loans",
+          "type": "array"
+        },
+        "credit_cards": {
+          "description": "Credit card debt",
+          "items": {
+            "$ref": "#/$defs/CreditCard"
+          },
+          "title": "Credit Cards",
+          "type": "array"
+        },
+        "auto_loans": {
+          "description": "Auto loan debt",
+          "items": {
+            "$ref": "#/$defs/AutoLoan"
+          },
+          "title": "Auto Loans",
+          "type": "array"
+        }
+      },
+      "title": "Liabilities",
+      "type": "object"
+    },
+    "LifeInsurance": {
+      "description": "Life insurance policy information.",
+      "properties": {
+        "person": {
+          "description": "Insured person",
+          "enum": [
+            "primary",
+            "spouse"
+          ],
+          "title": "Person",
+          "type": "string"
+        },
+        "death_benefit": {
+          "description": "Death benefit amount",
+          "minimum": 0.0,
+          "title": "Death Benefit",
+          "type": "number"
+        },
+        "annual_premium": {
+          "description": "Annual premium amount",
+          "minimum": 0.0,
+          "title": "Annual Premium",
+          "type": "number"
+        },
+        "term_years": {
+          "description": "Policy term in years",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Term Years",
+          "type": "integer"
+        },
+        "policy_type": {
+          "default": "term",
+          "description": "Type of policy",
+          "enum": [
+            "term",
+            "whole",
+            "universal"
+          ],
+          "title": "Policy Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "person",
+        "death_benefit",
+        "annual_premium",
+        "term_years"
+      ],
+      "title": "LifeInsurance",
+      "type": "object"
+    },
+    "LongTermCareInsurance": {
+      "description": "Long-term care insurance policy information.",
+      "properties": {
+        "person": {
+          "description": "Insured person",
+          "enum": [
+            "primary",
+            "spouse"
+          ],
+          "title": "Person",
+          "type": "string"
+        },
+        "daily_benefit": {
+          "description": "Daily benefit amount",
+          "minimum": 0.0,
+          "title": "Daily Benefit",
+          "type": "number"
+        },
+        "annual_premium": {
+          "description": "Annual premium amount",
+          "minimum": 0.0,
+          "title": "Annual Premium",
+          "type": "number"
+        },
+        "benefit_period": {
+          "default": 3,
+          "description": "Years of coverage",
+          "minimum": 1,
+          "title": "Benefit Period",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "person",
+        "daily_benefit",
+        "annual_premium"
+      ],
+      "title": "LongTermCareInsurance",
+      "type": "object"
+    },
+    "LumpyExpense": {
+      "description": "One-time or irregular expenses.",
+      "properties": {
+        "name": {
+          "description": "Expense name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Expense amount",
+          "minimum": 0.0,
+          "title": "Amount",
+          "type": "number"
+        },
+        "year": {
+          "description": "Year expense occurs",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Year",
+          "type": "integer"
+        },
+        "category": {
+          "default": "other",
+          "description": "Expense category",
+          "enum": [
+            "home_improvement",
+            "vehicle",
+            "medical",
+            "education",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "amount",
+        "year"
+      ],
+      "title": "LumpyExpense",
+      "type": "object"
+    },
+    "MarketModel": {
+      "description": "Market assumptions and return expectations.",
+      "properties": {
+        "expected_returns": {
+          "$ref": "#/$defs/ExpectedReturns",
+          "description": "Expected annual returns by asset class"
+        },
+        "volatility": {
+          "$ref": "#/$defs/Volatility",
+          "description": "Annual volatility by asset class"
+        },
+        "correlations": {
+          "$ref": "#/$defs/Correlations",
+          "description": "Correlation matrix between asset classes"
+        },
+        "inflation": {
+          "default": 0.025,
+          "description": "Expected annual inflation rate",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Inflation",
+          "type": "number"
+        },
+        "simulation_type": {
+          "default": "monte_carlo",
+          "description": "Type of simulation to run",
+          "enum": [
+            "deterministic",
+            "monte_carlo",
+            "historical_bootstrap"
+          ],
+          "title": "Simulation Type",
+          "type": "string"
+        },
+        "num_simulations": {
+          "default": 10000,
+          "description": "Number of Monte Carlo simulations",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Num Simulations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expected_returns",
+        "volatility"
+      ],
+      "title": "MarketModel",
+      "type": "object"
+    },
+    "Mortgage": {
+      "description": "Mortgage loan information.",
+      "properties": {
+        "name": {
+          "description": "Mortgage name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "original_balance": {
+          "description": "Original loan balance",
+          "minimum": 0.0,
+          "title": "Original Balance",
+          "type": "number"
+        },
+        "current_balance": {
+          "description": "Current loan balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "interest_rate": {
+          "description": "Interest rate (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Interest Rate",
+          "type": "number"
+        },
+        "term_years": {
+          "description": "Loan term in years",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Term Years",
+          "type": "integer"
+        },
+        "start_year": {
+          "description": "Loan start year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "property_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Current property value",
+          "title": "Property Value"
+        },
+        "extra_payment": {
+          "default": 0,
+          "description": "Monthly extra payment amount",
+          "minimum": 0.0,
+          "title": "Extra Payment",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "original_balance",
+        "current_balance",
+        "interest_rate",
+        "term_years",
+        "start_year"
+      ],
+      "title": "Mortgage",
+      "type": "object"
+    },
+    "OtherIncome": {
+      "description": "Other income sources.",
+      "properties": {
+        "name": {
+          "description": "Income source name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "annual_amount": {
+          "description": "Annual income amount",
+          "minimum": 0.0,
+          "title": "Annual Amount",
+          "type": "number"
+        },
+        "start_year": {
+          "description": "Start year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_year": {
+          "description": "End year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "End Year",
+          "type": "integer"
+        },
+        "growth_rate": {
+          "default": 0,
+          "description": "Annual growth rate",
+          "title": "Growth Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "annual_amount",
+        "start_year",
+        "end_year"
+      ],
+      "title": "OtherIncome",
+      "type": "object"
+    },
+    "Pension": {
+      "description": "Pension income information.",
+      "properties": {
+        "person": {
+          "description": "Which household member",
+          "enum": [
+            "primary",
+            "spouse"
+          ],
+          "title": "Person",
+          "type": "string"
+        },
+        "annual_amount": {
+          "description": "Annual pension amount",
+          "minimum": 0.0,
+          "title": "Annual Amount",
+          "type": "number"
+        },
+        "start_year": {
+          "description": "Start year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_year": {
+          "description": "End year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "End Year",
+          "type": "integer"
+        },
+        "cola": {
+          "default": 0.02,
+          "description": "Annual cost of living adjustment",
+          "title": "Cola",
+          "type": "number"
+        }
+      },
+      "required": [
+        "person",
+        "annual_amount",
+        "start_year",
+        "end_year"
+      ],
+      "title": "Pension",
+      "type": "object"
+    },
+    "Policies": {
+      "description": "Insurance and other policies.",
+      "properties": {
+        "life_insurance": {
+          "description": "Life insurance policies",
+          "items": {
+            "$ref": "#/$defs/LifeInsurance"
+          },
+          "title": "Life Insurance",
+          "type": "array"
+        },
+        "disability_insurance": {
+          "description": "Disability insurance policies",
+          "items": {
+            "$ref": "#/$defs/DisabilityInsurance"
+          },
+          "title": "Disability Insurance",
+          "type": "array"
+        },
+        "long_term_care": {
+          "description": "Long-term care insurance",
+          "items": {
+            "$ref": "#/$defs/LongTermCareInsurance"
+          },
+          "title": "Long Term Care",
+          "type": "array"
+        }
+      },
+      "title": "Policies",
+      "type": "object"
+    },
+    "Rebalancing": {
+      "description": "Portfolio rebalancing strategy.",
+      "properties": {
+        "frequency": {
+          "default": "annual",
+          "description": "Rebalancing frequency",
+          "enum": [
+            "annual",
+            "semi_annual",
+            "quarterly",
+            "monthly",
+            "threshold_based"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "threshold": {
+          "default": 0.05,
+          "description": "Rebalancing threshold (for threshold_based)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Threshold",
+          "type": "number"
+        }
+      },
+      "title": "Rebalancing",
+      "type": "object"
+    },
+    "Roth401kAccount": {
+      "description": "Roth 401(k) account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation"
+      ],
+      "title": "Roth401kAccount",
+      "type": "object"
+    },
+    "RothIRAAccount": {
+      "description": "Roth IRA account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation"
+      ],
+      "title": "RothIRAAccount",
+      "type": "object"
+    },
+    "Salary": {
+      "description": "Salary income information.",
+      "properties": {
+        "person": {
+          "description": "Which household member",
+          "enum": [
+            "primary",
+            "spouse"
+          ],
+          "title": "Person",
+          "type": "string"
+        },
+        "annual_amount": {
+          "description": "Annual salary amount",
+          "minimum": 0.0,
+          "title": "Annual Amount",
+          "type": "number"
+        },
+        "start_year": {
+          "description": "Start year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_year": {
+          "description": "End year",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "End Year",
+          "type": "integer"
+        },
+        "growth_rate": {
+          "default": 0.03,
+          "description": "Annual salary growth rate",
+          "title": "Growth Rate",
+          "type": "number"
+        },
+        "bonus": {
+          "default": 0,
+          "description": "Annual bonus amount",
+          "minimum": 0.0,
+          "title": "Bonus",
+          "type": "number"
+        }
+      },
+      "required": [
+        "person",
+        "annual_amount",
+        "start_year",
+        "end_year"
+      ],
+      "title": "Salary",
+      "type": "object"
+    },
+    "ScenarioMetadata": {
+      "description": "Metadata about the scenario.",
+      "properties": {
+        "name": {
+          "description": "Scenario name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scenario description",
+          "title": "Description"
+        },
+        "created_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When scenario was created",
+          "title": "Created Date"
+        },
+        "modified_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When scenario was last modified",
+          "title": "Modified Date"
+        },
+        "version": {
+          "default": "0.1",
+          "description": "Schema version",
+          "title": "Version",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Tags for categorization",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ScenarioMetadata",
+      "type": "object"
+    },
+    "SocialSecurity": {
+      "description": "Social Security benefit information.",
+      "properties": {
+        "person": {
+          "description": "Which household member",
+          "enum": [
+            "primary",
+            "spouse"
+          ],
+          "title": "Person",
+          "type": "string"
+        },
+        "annual_benefit": {
+          "description": "Annual benefit amount",
+          "minimum": 0.0,
+          "title": "Annual Benefit",
+          "type": "number"
+        },
+        "claim_year": {
+          "description": "Year benefits start",
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Claim Year",
+          "type": "integer"
+        },
+        "benefit_type": {
+          "default": "retirement",
+          "description": "Type of benefit",
+          "enum": [
+            "retirement",
+            "spousal",
+            "survivor"
+          ],
+          "title": "Benefit Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "person",
+        "annual_benefit",
+        "claim_year"
+      ],
+      "title": "SocialSecurity",
+      "type": "object"
+    },
+    "SocialSecurityStrategy": {
+      "description": "Social Security claiming strategy.",
+      "properties": {
+        "primary_claim_age": {
+          "default": 67,
+          "description": "Age to claim primary Social Security",
+          "maximum": 70,
+          "minimum": 62,
+          "title": "Primary Claim Age",
+          "type": "integer"
+        },
+        "spouse_claim_age": {
+          "default": 67,
+          "description": "Age to claim spousal Social Security",
+          "maximum": 70,
+          "minimum": 62,
+          "title": "Spouse Claim Age",
+          "type": "integer"
+        },
+        "file_and_suspend": {
+          "default": false,
+          "description": "Use file and suspend strategy",
+          "title": "File And Suspend",
+          "type": "boolean"
+        }
+      },
+      "title": "SocialSecurityStrategy",
+      "type": "object"
+    },
+    "Strategy": {
+      "description": "Withdrawal and investment strategy.",
+      "properties": {
+        "withdrawal_method": {
+          "default": "fixed_real",
+          "description": "Method for calculating annual withdrawals",
+          "enum": [
+            "fixed_real",
+            "fixed_percentage",
+            "vpw",
+            "guyton_klinger"
+          ],
+          "title": "Withdrawal Method",
+          "type": "string"
+        },
+        "withdrawal_rate": {
+          "default": 0.04,
+          "description": "Initial withdrawal rate (for fixed methods)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Withdrawal Rate",
+          "type": "number"
+        },
+        "withdrawal_start_year": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Year to start withdrawals",
+          "title": "Withdrawal Start Year"
+        },
+        "rebalancing": {
+          "$ref": "#/$defs/Rebalancing",
+          "description": "Portfolio rebalancing strategy"
+        },
+        "tax_optimization": {
+          "$ref": "#/$defs/TaxOptimization",
+          "description": "Tax optimization strategies"
+        },
+        "social_security_strategy": {
+          "$ref": "#/$defs/SocialSecurityStrategy",
+          "description": "Social Security claiming strategy"
+        }
+      },
+      "title": "Strategy",
+      "type": "object"
+    },
+    "StudentLoan": {
+      "description": "Student loan information.",
+      "properties": {
+        "name": {
+          "description": "Loan name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current loan balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "interest_rate": {
+          "description": "Interest rate (0-1)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Interest Rate",
+          "type": "number"
+        },
+        "minimum_payment": {
+          "description": "Minimum monthly payment",
+          "minimum": 0.0,
+          "title": "Minimum Payment",
+          "type": "number"
+        },
+        "loan_type": {
+          "default": "federal",
+          "description": "Type of loan",
+          "enum": [
+            "federal",
+            "private"
+          ],
+          "title": "Loan Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "interest_rate",
+        "minimum_payment"
+      ],
+      "title": "StudentLoan",
+      "type": "object"
+    },
+    "TaxOptimization": {
+      "description": "Tax optimization strategies.",
+      "properties": {
+        "withdrawal_order": {
+          "default": [
+            "cash",
+            "taxable",
+            "traditional",
+            "roth"
+          ],
+          "description": "Order of account types for withdrawals",
+          "items": {
+            "enum": [
+              "cash",
+              "taxable",
+              "traditional",
+              "roth"
+            ],
+            "type": "string"
+          },
+          "title": "Withdrawal Order",
+          "type": "array"
+        },
+        "tax_loss_harvesting": {
+          "default": true,
+          "description": "Enable tax loss harvesting",
+          "title": "Tax Loss Harvesting",
+          "type": "boolean"
+        },
+        "roth_conversions": {
+          "default": false,
+          "description": "Enable Roth conversions",
+          "title": "Roth Conversions",
+          "type": "boolean"
+        }
+      },
+      "title": "TaxOptimization",
+      "type": "object"
+    },
+    "TaxableAccount": {
+      "description": "Taxable investment account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        },
+        "cost_basis": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cost basis for tax calculations",
+          "title": "Cost Basis"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation"
+      ],
+      "title": "TaxableAccount",
+      "type": "object"
+    },
+    "Traditional401kAccount": {
+      "description": "Traditional 401(k) account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        },
+        "employer_match": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Annual employer match amount",
+          "title": "Employer Match"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation"
+      ],
+      "title": "Traditional401kAccount",
+      "type": "object"
+    },
+    "TraditionalIRAAccount": {
+      "description": "Traditional IRA account.",
+      "properties": {
+        "name": {
+          "description": "Account name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "current_balance": {
+          "description": "Current account balance",
+          "minimum": 0.0,
+          "title": "Current Balance",
+          "type": "number"
+        },
+        "asset_allocation": {
+          "$ref": "#/$defs/AssetAllocation",
+          "description": "Asset allocation"
+        }
+      },
+      "required": [
+        "name",
+        "current_balance",
+        "asset_allocation"
+      ],
+      "title": "TraditionalIRAAccount",
+      "type": "object"
+    },
+    "TransportationExpenses": {
+      "description": "Transportation expenses.",
+      "properties": {
+        "auto_payment": {
+          "default": 0,
+          "description": "Monthly auto loan payment",
+          "minimum": 0.0,
+          "title": "Auto Payment",
+          "type": "number"
+        },
+        "auto_insurance": {
+          "default": 0,
+          "description": "Annual auto insurance",
+          "minimum": 0.0,
+          "title": "Auto Insurance",
+          "type": "number"
+        },
+        "gas": {
+          "default": 0,
+          "description": "Monthly gas expenses",
+          "minimum": 0.0,
+          "title": "Gas",
+          "type": "number"
+        },
+        "maintenance": {
+          "default": 0,
+          "description": "Annual auto maintenance",
+          "minimum": 0.0,
+          "title": "Maintenance",
+          "type": "number"
+        }
+      },
+      "title": "TransportationExpenses",
+      "type": "object"
+    },
+    "Volatility": {
+      "description": "Annual volatility by asset class.",
+      "properties": {
+        "stocks": {
+          "description": "Annual stock volatility",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Stocks",
+          "type": "number"
+        },
+        "bonds": {
+          "description": "Annual bond volatility",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Bonds",
+          "type": "number"
+        },
+        "cash": {
+          "description": "Annual cash volatility",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Cash",
+          "type": "number"
+        }
+      },
+      "required": [
+        "stocks",
+        "bonds",
+        "cash"
+      ],
+      "title": "Volatility",
+      "type": "object"
+    }
+  },
+  "description": "Schema for retirement planning scenarios including household, accounts, liabilities, incomes, expenses, policies, market model, and strategy",
+  "properties": {
+    "household": {
+      "$ref": "#/$defs/Household",
+      "description": "Household composition and demographics"
+    },
+    "accounts": {
+      "$ref": "#/$defs/Accounts",
+      "description": "Financial accounts and assets"
+    },
+    "liabilities": {
+      "$ref": "#/$defs/Liabilities",
+      "description": "Debts and liabilities"
+    },
+    "incomes": {
+      "$ref": "#/$defs/Incomes",
+      "description": "Income sources and projections"
+    },
+    "expenses": {
+      "$ref": "#/$defs/Expenses",
+      "description": "Expense categories and projections"
+    },
+    "policies": {
+      "$ref": "#/$defs/Policies",
+      "description": "Insurance and other policies"
+    },
+    "market_model": {
+      "$ref": "#/$defs/MarketModel",
+      "description": "Market assumptions and return expectations"
+    },
+    "strategy": {
+      "$ref": "#/$defs/Strategy",
+      "description": "Withdrawal and investment strategy"
+    },
+    "scenario_metadata": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ScenarioMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Metadata about the scenario"
+    }
+  },
+  "required": [
+    "household",
+    "accounts",
+    "liabilities",
+    "incomes",
+    "expenses",
+    "policies",
+    "market_model",
+    "strategy"
+  ],
+  "title": "Retirement Planning Scenario Schema v0.1",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://retirement-planner.com/schema/scenario_v0_1.json"
+}

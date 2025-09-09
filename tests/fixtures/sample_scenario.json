@@ -1,0 +1,299 @@
+{
+  "household": {
+    "primary_age": 35,
+    "spouse_age": 33,
+    "filing_status": "married_filing_jointly",
+    "state": "CA",
+    "children": [
+      {
+        "birth_year": 2010,
+        "college_start_year": 2028,
+        "college_type": "public"
+      },
+      {
+        "birth_year": 2015,
+        "college_start_year": 2033,
+        "college_type": "public"
+      }
+    ]
+  },
+  "accounts": {
+    "taxable": [
+      {
+        "name": "Vanguard Brokerage",
+        "current_balance": 50000,
+        "asset_allocation": {
+          "stocks": 0.8,
+          "bonds": 0.15,
+          "cash": 0.05
+        },
+        "cost_basis": 45000
+      }
+    ],
+    "traditional_401k": [
+      {
+        "name": "Company 401k",
+        "current_balance": 150000,
+        "asset_allocation": {
+          "stocks": 0.7,
+          "bonds": 0.25,
+          "cash": 0.05
+        },
+        "employer_match": 5000
+      }
+    ],
+    "roth_401k": [],
+    "traditional_ira": [
+      {
+        "name": "Rollover IRA",
+        "current_balance": 75000,
+        "asset_allocation": {
+          "stocks": 0.75,
+          "bonds": 0.2,
+          "cash": 0.05
+        }
+      }
+    ],
+    "roth_ira": [
+      {
+        "name": "Roth IRA",
+        "current_balance": 25000,
+        "asset_allocation": {
+          "stocks": 0.9,
+          "bonds": 0.1,
+          "cash": 0.0
+        }
+      }
+    ],
+    "hsa": [
+      {
+        "name": "HSA Account",
+        "current_balance": 15000,
+        "asset_allocation": {
+          "stocks": 0.6,
+          "bonds": 0.3,
+          "cash": 0.1
+        }
+      }
+    ],
+    "529": [
+      {
+        "name": "Child 1 529",
+        "current_balance": 10000,
+        "beneficiary": "Child 1",
+        "asset_allocation": {
+          "stocks": 0.7,
+          "bonds": 0.25,
+          "cash": 0.05
+        }
+      },
+      {
+        "name": "Child 2 529",
+        "current_balance": 5000,
+        "beneficiary": "Child 2",
+        "asset_allocation": {
+          "stocks": 0.8,
+          "bonds": 0.15,
+          "cash": 0.05
+        }
+      }
+    ],
+    "cash": {
+      "checking": 5000,
+      "savings": 15000,
+      "cds": 10000,
+      "money_market": 5000
+    }
+  },
+  "liabilities": {
+    "mortgages": [
+      {
+        "name": "Primary Residence",
+        "original_balance": 400000,
+        "current_balance": 350000,
+        "interest_rate": 0.035,
+        "term_years": 30,
+        "start_year": 2020,
+        "property_value": 500000,
+        "extra_payment": 0
+      }
+    ],
+    "student_loans": [
+      {
+        "name": "Primary Student Loan",
+        "current_balance": 25000,
+        "interest_rate": 0.045,
+        "minimum_payment": 300,
+        "loan_type": "federal"
+      }
+    ],
+    "credit_cards": [],
+    "auto_loans": [
+      {
+        "name": "Primary Vehicle",
+        "current_balance": 15000,
+        "interest_rate": 0.029,
+        "term_months": 60,
+        "monthly_payment": 280
+      }
+    ]
+  },
+  "incomes": {
+    "salary": [
+      {
+        "person": "primary",
+        "annual_amount": 120000,
+        "start_year": 2024,
+        "end_year": 2054,
+        "growth_rate": 0.03,
+        "bonus": 10000
+      },
+      {
+        "person": "spouse",
+        "annual_amount": 80000,
+        "start_year": 2024,
+        "end_year": 2052,
+        "growth_rate": 0.025,
+        "bonus": 5000
+      }
+    ],
+    "social_security": [
+      {
+        "person": "primary",
+        "annual_benefit": 35000,
+        "claim_year": 2057,
+        "benefit_type": "retirement"
+      },
+      {
+        "person": "spouse",
+        "annual_benefit": 25000,
+        "claim_year": 2055,
+        "benefit_type": "retirement"
+      }
+    ],
+    "pension": [],
+    "other": [
+      {
+        "name": "Rental Income",
+        "annual_amount": 12000,
+        "start_year": 2024,
+        "end_year": 2070,
+        "growth_rate": 0.02
+      }
+    ]
+  },
+  "expenses": {
+    "housing": {
+      "mortgage_payment": 2000,
+      "property_tax": 6000,
+      "home_insurance": 1200,
+      "hoa_fees": 0,
+      "maintenance": 3000,
+      "utilities": 400
+    },
+    "transportation": {
+      "auto_payment": 280,
+      "auto_insurance": 1200,
+      "gas": 300,
+      "maintenance": 1500
+    },
+    "healthcare": {
+      "insurance": 800,
+      "out_of_pocket": 3000,
+      "medicare": 0
+    },
+    "food": 1200,
+    "entertainment": 500,
+    "travel": 8000,
+    "education": 0,
+    "other": 800,
+    "lumpy_expenses": [
+      {
+        "name": "New Roof",
+        "amount": 15000,
+        "year": 2030,
+        "category": "home_improvement"
+      },
+      {
+        "name": "New Car",
+        "amount": 35000,
+        "year": 2035,
+        "category": "vehicle"
+      }
+    ]
+  },
+  "policies": {
+    "life_insurance": [
+      {
+        "person": "primary",
+        "death_benefit": 500000,
+        "annual_premium": 600,
+        "term_years": 20,
+        "policy_type": "term"
+      },
+      {
+        "person": "spouse",
+        "death_benefit": 300000,
+        "annual_premium": 400,
+        "term_years": 20,
+        "policy_type": "term"
+      }
+    ],
+    "disability_insurance": [
+      {
+        "person": "primary",
+        "monthly_benefit": 5000,
+        "annual_premium": 1200,
+        "elimination_period": 90
+      }
+    ],
+    "long_term_care": []
+  },
+  "market_model": {
+    "expected_returns": {
+      "stocks": 0.08,
+      "bonds": 0.04,
+      "cash": 0.02
+    },
+    "volatility": {
+      "stocks": 0.18,
+      "bonds": 0.05,
+      "cash": 0.01
+    },
+    "correlations": {
+      "stocks_bonds": 0.2,
+      "stocks_cash": 0.0,
+      "bonds_cash": 0.1
+    },
+    "inflation": 0.025,
+    "simulation_type": "monte_carlo",
+    "num_simulations": 10000
+  },
+  "strategy": {
+    "withdrawal_method": "fixed_real",
+    "withdrawal_rate": 0.04,
+    "withdrawal_start_year": 2054,
+    "rebalancing": {
+      "frequency": "annual",
+      "threshold": 0.05
+    },
+    "tax_optimization": {
+      "withdrawal_order": ["cash", "taxable", "traditional", "roth"],
+      "tax_loss_harvesting": true,
+      "roth_conversions": false
+    },
+    "social_security_strategy": {
+      "primary_claim_age": 67,
+      "spouse_claim_age": 67,
+      "file_and_suspend": false
+    }
+  },
+  "scenario_metadata": {
+    "name": "Sample Family Scenario",
+    "description": "A typical dual-income family with children planning for retirement",
+    "created_date": "2024-01-15T10:00:00Z",
+    "modified_date": "2024-01-15T10:00:00Z",
+    "version": "0.1",
+    "tags": ["family", "dual-income", "children", "moderate-risk"]
+  }
+}
