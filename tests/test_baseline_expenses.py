@@ -6,27 +6,26 @@ categories, one-time lumpy events, inflation adjustment, and cashflow integratio
 """
 
 import pytest
-from decimal import Decimal
 
 from app.models.baseline_expenses import (
     ExpenseCategory,
-    HousingExpenseCategory,
-    TransportationExpenseCategory,
-    HealthcareExpenseCategory,
-    LumpyEvent,
     ExpenseEngine,
-    create_expense_engine_from_scenario,
+    HealthcareExpenseCategory,
+    HousingExpenseCategory,
+    LumpyEvent,
+    TransportationExpenseCategory,
     calculate_expense_inflation_impact,
+    create_expense_engine_from_scenario,
     validate_expense_timing,
 )
-from app.models.time_grid import TimeGrid, InflationAdjuster
 from app.models.scenario import (
     Expenses,
-    HousingExpenses,
-    TransportationExpenses,
     HealthcareExpenses,
+    HousingExpenses,
     LumpyExpense,
+    TransportationExpenses,
 )
+from app.models.time_grid import InflationAdjuster, TimeGrid
 
 
 class TestExpenseCategory:

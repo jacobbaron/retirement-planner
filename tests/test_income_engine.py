@@ -7,42 +7,38 @@ and tax treatment metadata.
 """
 
 import pytest
-from decimal import Decimal
 
 from app.models.income_engine import (
-    IncomeCategory,
-    EmploymentIncome,
-    SelfEmploymentIncome,
     BusinessIncome,
+    EmploymentIncome,
+    IncomeCategory,
+    IncomeChangeEvent,
+    IncomeEngine,
     InvestmentIncome,
     RentalIncome,
     RetirementIncome,
+    SelfEmploymentIncome,
     VariableIncome,
-    IncomeChangeEvent,
-    IncomeEngine,
+    calculate_income_present_value,
     create_income_engine_from_scenario,
     validate_income_timing,
-    calculate_income_present_value,
 )
-from app.models.time_grid import TimeGrid, InflationAdjuster
 from app.models.scenario import (
-    Incomes,
-    Salary,
-    OtherIncome,
-    SocialSecurity,
-    Pension,
-    Household,
-    Strategy,
-    MarketModel,
-    ExpectedReturns,
-    Volatility,
-    Correlations,
-    Scenario,
     Accounts,
-    Liabilities,
+    ExpectedReturns,
     Expenses,
+    Household,
+    Incomes,
+    Liabilities,
+    MarketModel,
+    OtherIncome,
     Policies,
+    Salary,
+    Scenario,
+    Strategy,
+    Volatility,
 )
+from app.models.time_grid import InflationAdjuster, TimeGrid
 
 
 class TestIncomeCategory:
@@ -107,9 +103,7 @@ class TestIncomeCategory:
 
     def test_growth_adjustment(self):
         """Test growth adjustment calculation."""
-        category = IncomeCategory(
-            name="test", annual_amount=50000, growth_rate=0.03
-        )
+        category = IncomeCategory(name="test", annual_amount=50000, growth_rate=0.03)
 
         # Base year should return original amount
         amount = category.get_growth_adjusted_amount(2024, 2024)
@@ -377,7 +371,7 @@ class TestRetirementIncome:
             annual_amount=30000,
             cola_rate=0.02,
             income_type="pension",
-            person="primary"
+            person="primary",
         )
 
         # Base year
@@ -497,9 +491,7 @@ class TestIncomeEngine:
 
     def test_add_income_category(self, income_engine):
         """Test adding income categories."""
-        category = IncomeCategory(
-            name="test_income", annual_amount=50000
-        )
+        category = IncomeCategory(name="test_income", annual_amount=50000)
         income_engine.add_income_category(category)
 
         assert len(income_engine.income_categories) == 1
@@ -556,12 +548,8 @@ class TestIncomeEngine:
 
     def test_get_total_annual_income(self, income_engine):
         """Test getting total annual income."""
-        category1 = IncomeCategory(
-            name="salary", annual_amount=80000
-        )
-        category2 = IncomeCategory(
-            name="bonus", annual_amount=10000
-        )
+        category1 = IncomeCategory(name="salary", annual_amount=80000)
+        category2 = IncomeCategory(name="bonus", annual_amount=10000)
         income_engine.add_income_category(category1)
         income_engine.add_income_category(category2)
 
@@ -599,19 +587,15 @@ class TestIncomeEngine:
 
     def test_get_total_income_series(self, income_engine):
         """Test getting total income series."""
-        category1 = IncomeCategory(
-            name="salary", annual_amount=80000
-        )
-        category2 = IncomeCategory(
-            name="bonus", annual_amount=10000
-        )
+        category1 = IncomeCategory(name="salary", annual_amount=80000)
+        category2 = IncomeCategory(name="bonus", annual_amount=10000)
         income_engine.add_income_category(category1)
         income_engine.add_income_category(category2)
 
         total_series = income_engine.get_total_income_series(2024, 2025)
         assert len(total_series) == 2
         assert total_series[0] == 90000  # Base year: 80000 + 10000
-        assert total_series[1] > 90000   # Future year with adjustments
+        assert total_series[1] > 90000  # Future year with adjustments
 
     def test_employment_income_with_bonus(self, income_engine):
         """Test employment income with bonus calculation."""
@@ -635,9 +619,7 @@ class TestIncomeEngine:
 
     def test_income_change_events(self, income_engine):
         """Test income change events."""
-        category = IncomeCategory(
-            name="salary", annual_amount=80000
-        )
+        category = IncomeCategory(name="salary", annual_amount=80000)
         income_engine.add_income_category(category)
 
         # Add a raise event
@@ -656,13 +638,13 @@ class TestIncomeEngine:
 
         # After the change
         income = income_engine.get_annual_income(2025)
-        assert income["salary"] == 90000  # New amount (no adjustments applied to changed amount)
+        assert (
+            income["salary"] == 90000
+        )  # New amount (no adjustments applied to changed amount)
 
     def test_income_gap_event(self, income_engine):
         """Test income gap event."""
-        category = IncomeCategory(
-            name="salary", annual_amount=80000
-        )
+        category = IncomeCategory(name="salary", annual_amount=80000)
         income_engine.add_income_category(category)
 
         # Add a gap event
@@ -871,7 +853,9 @@ class TestIncomeEngineEdgeCases:
     def test_engine_with_high_inflation(self):
         """Test engine with high inflation rate."""
         time_grid = TimeGrid(start_year=2024, end_year=2060, base_year=2024)
-        inflation_adjuster = InflationAdjuster(base_year=2024, inflation_rate=0.10)  # 10% inflation
+        inflation_adjuster = InflationAdjuster(
+            base_year=2024, inflation_rate=0.10
+        )  # 10% inflation
 
         engine = IncomeEngine(
             time_grid=time_grid,
@@ -902,7 +886,9 @@ class TestIncomeEngineEdgeCases:
         )
 
         category = IncomeCategory(
-            name="declining_income", annual_amount=80000, growth_rate=-0.02  # -2% growth
+            name="declining_income",
+            annual_amount=80000,
+            growth_rate=-0.02,  # -2% growth
         )
         engine.add_income_category(category)
 

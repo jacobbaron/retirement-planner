@@ -5,8 +5,6 @@ This module tests the time grid, inflation adjustment, currency formatting,
 and real vs nominal value calculations.
 """
 
-from decimal import Decimal
-
 import pytest
 
 from app.models.time_grid import (

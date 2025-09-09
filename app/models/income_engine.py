@@ -5,11 +5,11 @@ This module handles income modeling including salary growth, bonuses, and other 
 sources with inflation adjustment, timing constraints, and tax treatment metadata.
 """
 
-from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator, ValidationInfo
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
-from .time_grid import TimeGrid, InflationAdjuster
+from .time_grid import InflationAdjuster, TimeGrid
 
 if TYPE_CHECKING:
     from .scenario import Scenario
@@ -197,7 +197,9 @@ class InvestmentIncome(IncomeCategory):
             data["tax_treatment"] = "investment_income"
         if "withholding_rate" not in data:
             # Lower withholding for investment income
-            data["withholding_rate"] = 0.15 if data.get("qualified_dividends", False) else 0.22
+            data["withholding_rate"] = (
+                0.15 if data.get("qualified_dividends", False) else 0.22
+            )
         super().__init__(**data)
 
 
@@ -286,9 +288,7 @@ class VariableIncome(IncomeCategory):
     variability_type: Literal["commission", "seasonal", "freelance", "irregular"] = (
         Field(..., description="Type of income variability")
     )
-    base_amount: float = Field(
-        default=0, ge=0, description="Base guaranteed amount"
-    )
+    base_amount: float = Field(default=0, ge=0, description="Base guaranteed amount")
     variable_amount: float = Field(
         default=0, ge=0, description="Variable component amount"
     )
@@ -406,7 +406,9 @@ class IncomeEngine(BaseModel):
 
         return tax_groups
 
-    def get_income_series(self, start_year: Optional[int] = None, end_year: Optional[int] = None) -> Dict[str, List[float]]:
+    def get_income_series(
+        self, start_year: Optional[int] = None, end_year: Optional[int] = None
+    ) -> Dict[str, List[float]]:
         """
         Get income series for all years in the time grid.
 
@@ -437,13 +439,17 @@ class IncomeEngine(BaseModel):
 
         return income_series
 
-    def get_total_income_series(self, start_year: Optional[int] = None, end_year: Optional[int] = None) -> List[float]:
+    def get_total_income_series(
+        self, start_year: Optional[int] = None, end_year: Optional[int] = None
+    ) -> List[float]:
         """Get total income series for all years."""
         income_series = self.get_income_series(start_year, end_year)
-        years = list(range(
-            start_year or self.time_grid.start_year,
-            (end_year or self.time_grid.end_year) + 1
-        ))
+        years = list(
+            range(
+                start_year or self.time_grid.start_year,
+                (end_year or self.time_grid.end_year) + 1,
+            )
+        )
 
         total_series = []
         for i, year in enumerate(years):
@@ -468,7 +474,9 @@ class IncomeEngine(BaseModel):
         elif isinstance(category, RentalIncome):
             return category.get_net_rental_income(year, self.inflation_adjuster)
         elif isinstance(category, RetirementIncome):
-            return category.get_cola_adjusted_amount(year, self.inflation_adjuster.base_year)
+            return category.get_cola_adjusted_amount(
+                year, self.inflation_adjuster.base_year
+            )
         elif isinstance(category, VariableIncome):
             return category.get_variable_amount(year)
 
@@ -494,7 +502,9 @@ class IncomeEngine(BaseModel):
 
         return base_amount
 
-    def _apply_income_change(self, current_amount: float, event: IncomeChangeEvent) -> float:
+    def _apply_income_change(
+        self, current_amount: float, event: IncomeChangeEvent
+    ) -> float:
         """Apply an income change event to the current amount."""
         if event.change_type == "raise" and event.new_amount is not None:
             return event.new_amount
@@ -575,7 +585,10 @@ def validate_income_timing(
 
     for category in income_categories:
         # Check timing constraints
-        if category.start_year is not None and category.start_year < time_grid.start_year:
+        if (
+            category.start_year is not None
+            and category.start_year < time_grid.start_year
+        ):
             errors.append(f"{category.name} starts before time grid begins")
 
         if category.end_year is not None and category.end_year > time_grid.end_year:
@@ -583,11 +596,15 @@ def validate_income_timing(
 
         # Check growth rate is reasonable
         if abs(category.growth_rate) > 0.5:  # 50% growth rate seems excessive
-            errors.append(f"{category.name} has excessive growth rate: {category.growth_rate}")
+            errors.append(
+                f"{category.name} has excessive growth rate: {category.growth_rate}"
+            )
 
         # Check withholding rate is reasonable
         if category.withholding_rate > 0.5:  # 50% withholding seems excessive
-            errors.append(f"{category.name} has excessive withholding rate: {category.withholding_rate}")
+            errors.append(
+                f"{category.name} has excessive withholding rate: {category.withholding_rate}"
+            )
 
     return errors
 

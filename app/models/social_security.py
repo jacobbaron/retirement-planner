@@ -6,12 +6,12 @@ for the retirement planning engine, providing fixed annual benefit amounts with
 claim timing, benefit types, and COLA adjustments.
 """
 
-from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-from .time_grid import TimeGrid, InflationAdjuster
-from .scenario import SocialSecurity, SocialSecurityStrategy, Household
+from .scenario import Household, SocialSecurity, SocialSecurityStrategy
+from .time_grid import InflationAdjuster, TimeGrid
 
 if TYPE_CHECKING:
     from .scenario import Scenario
@@ -46,9 +46,7 @@ class SocialSecurityEngine(BaseModel):
     strategy: SocialSecurityStrategy = Field(
         ..., description="Social Security claiming strategy"
     )
-    cola_rate: float = Field(
-        default=0.02, ge=0, le=0.1, description="Annual COLA rate"
-    )
+    cola_rate: float = Field(default=0.02, ge=0, le=0.1, description="Annual COLA rate")
 
     def get_benefits_for_year(self, year: int) -> List[SocialSecurityBenefit]:
         """
@@ -188,7 +186,9 @@ class SocialSecurityEngine(BaseModel):
         return {
             "total_benefits": total_benefits,
             "benefit_years": benefit_years,
-            "average_annual_benefit": total_benefits / benefit_years if benefit_years > 0 else 0.0,
+            "average_annual_benefit": (
+                total_benefits / benefit_years if benefit_years > 0 else 0.0
+            ),
             "max_annual_benefit": max_annual_benefit,
             "benefit_details": benefit_details,
         }

@@ -6,30 +6,25 @@ contributions, withdrawals, growth calculations, and portfolio rebalancing.
 """
 
 import pytest
-from decimal import Decimal
 
 from app.models.account_evolution import (
-    Transaction,
     AccountBalance,
     AccountEvolution,
     AccountEvolutionEngine,
-    create_account_evolution_from_scenario_account,
-    create_account_evolution_engine_from_scenario,
+    Transaction,
     calculate_portfolio_return,
+    create_account_evolution_engine_from_scenario,
+    create_account_evolution_from_scenario_account,
     validate_account_balance_consistency,
 )
-from app.models.time_grid import TimeGrid, InflationAdjuster
 from app.models.scenario import (
+    Accounts,
     AssetAllocation,
+    RothIRAAccount,
     TaxableAccount,
     Traditional401kAccount,
-    Roth401kAccount,
-    TraditionalIRAAccount,
-    RothIRAAccount,
-    HSAAccount,
-    College529Account,
-    Accounts,
 )
+from app.models.time_grid import InflationAdjuster, TimeGrid
 
 
 class TestTransaction:
