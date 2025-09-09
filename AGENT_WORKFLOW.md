@@ -158,7 +158,17 @@ For each ticket:
    
    **⚠️ CRITICAL: You MUST create a PR for every ticket. Do not merge directly to main.**
 
-5. **Update status and add progress comment**:
+5. **Verify GitHub Actions CI passes**:
+   ```bash
+   # Check that the CI workflow passes before marking as ready for review
+   gh run list --limit 5
+   gh run watch [LATEST_RUN_ID]
+   
+   # If CI fails, fix issues and push updates
+   # Only proceed to step 6 when CI shows green/checkmark
+   ```
+
+6. **Update status and add progress comment** (ONLY after CI passes):
    ```bash
    # Remove in-progress label and add review label
    gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:review"
@@ -169,13 +179,14 @@ For each ticket:
    - Created feature branch: feature/EP-X-TY-short-description
    - Implemented all acceptance criteria
    - Added tests as specified
-   - Updated changelog
+   - Updated changelog and workflow documentation
    - Created PR: #[PR_NUMBER]
+   - ✅ **GitHub Actions CI passing** - All tests, linting, and checks pass
 
    🤖 Agent waiting for human review and merge."
    ```
 
-6. **Wait for review**: Agent should not proceed until PR is merged
+7. **Wait for review**: Agent should not proceed until PR is merged
 
 ### 4. Post-Merge Process
 After PR is merged:
@@ -308,6 +319,8 @@ Each implementation must pass:
 - [ ] Acceptance criteria met
 - [ ] Dependencies satisfied
 - [ ] Docker environment working (`docker compose up -d` and health check passes)
+- [ ] **Documentation updated** (CHANGELOG.md and AGENT_WORKFLOW.md)
+- [ ] **GitHub Actions CI passing** (all workflow jobs must show green/checkmark)
 
 ## Error Handling
 

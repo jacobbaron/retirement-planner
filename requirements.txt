@@ -1,9 +1,9 @@
 # Core application dependencies
-Flask==3.0.0
+Flask==3.1.1
 psycopg2-binary==2.9.9
 redis==5.0.1
 python-dotenv==1.0.0
-requests==2.31.0
+requests==2.32.4
 pydantic==2.9.2
 pydantic-settings==2.6.1
 sqlalchemy==2.0.25
