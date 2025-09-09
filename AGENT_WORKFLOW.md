@@ -76,7 +76,7 @@ This document outlines how Cursor agents can systematically work through the ret
 **Order 13-19**: Core simulation logic
 - EP-3-T1: Time grid & unit system (annual; real vs nominal) ✅ **COMPLETED**
 - EP-3-T2: Mortgage amortization module ✅ **COMPLETED**
-- EP-3-T3: Baseline expenses & lumpy events
+- EP-3-T3: Baseline expenses & lumpy events ✅ **COMPLETED**
 - EP-3-T4: Account balance evolution (taxable/trad/Roth)
 - EP-3-T5: Social Security stub (fixed input benefit)
 - EP-4-T1: Random returns generator (normal/lognormal selectable)

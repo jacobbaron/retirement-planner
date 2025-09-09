@@ -20,6 +20,17 @@ from .mortgage_amortization import (
     create_sample_mortgage,
     create_sample_refinancing,
 )
+from .baseline_expenses import (
+    ExpenseCategory,
+    HousingExpenseCategory,
+    TransportationExpenseCategory,
+    HealthcareExpenseCategory,
+    LumpyEvent,
+    ExpenseEngine,
+    create_expense_engine_from_scenario,
+    calculate_expense_inflation_impact,
+    validate_expense_timing,
+)
 from .account_evolution import (
     Transaction,
     AccountBalance,
@@ -48,6 +59,15 @@ __all__ = [
     "RefinancingScenario",
     "create_sample_mortgage",
     "create_sample_refinancing",
+    "ExpenseCategory",
+    "HousingExpenseCategory",
+    "TransportationExpenseCategory",
+    "HealthcareExpenseCategory",
+    "LumpyEvent",
+    "ExpenseEngine",
+    "create_expense_engine_from_scenario",
+    "calculate_expense_inflation_impact",
+    "validate_expense_timing",
     "Transaction",
     "AccountBalance",
     "AccountEvolution",
