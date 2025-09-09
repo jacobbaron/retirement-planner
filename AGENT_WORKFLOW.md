@@ -150,16 +150,16 @@ For each ticket:
    ```bash
    # Remove in-progress label and add review label
    gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:review"
-   
+
    # Add progress comment
    gh issue comment [ISSUE_NUMBER] --body "✅ **Implementation complete**
-   
+
    - Created feature branch: feature/EP-X-TY-short-description
    - Implemented all acceptance criteria
    - Added tests as specified
    - Updated changelog
    - Created PR: #[PR_NUMBER]
-   
+
    🤖 Agent waiting for human review and merge."
    ```
 
@@ -184,7 +184,7 @@ After PR is merged:
    ```bash
    # Update status label
    gh issue edit [issue-number] --remove-label "status:review" --add-label "status:completed"
-   
+
    # Close with detailed comment
    gh issue close [issue-number] --comment "✅ **COMPLETED**
 
@@ -193,7 +193,7 @@ After PR is merged:
    - Tests implemented and passing
    - Code reviewed and merged in PR #[pr-number]
    - Changelog updated
-   
+
    🤖 **Agent Status**: Ready for next ticket in sequence."
    ```
 
