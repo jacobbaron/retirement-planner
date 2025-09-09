@@ -1,7 +1,7 @@
 # Retirement Planner Development Makefile
 # This Makefile provides common development tasks for the retirement planner project
 
-.PHONY: help install test lint typecheck format coverage clean docker-up docker-down docker-test
+.PHONY: help install test lint typecheck format coverage check clean docker-up docker-down docker-test docker-check
 
 # Default target
 help:
@@ -13,12 +13,14 @@ help:
 	@echo "  make typecheck   - Run type checking with mypy"
 	@echo "  make format      - Format code with black and isort"
 	@echo "  make coverage    - Run tests with coverage report"
+	@echo "  make check       - Run all quality checks (test + lint + typecheck)"
 	@echo "  make clean       - Clean up temporary files"
 	@echo ""
 	@echo "Docker Commands:"
 	@echo "  make docker-up   - Start Docker development environment"
 	@echo "  make docker-down - Stop Docker development environment"
 	@echo "  make docker-test - Run tests in Docker container"
+	@echo "  make docker-check - Run all quality checks in Docker container"
 	@echo ""
 
 # Install dependencies
@@ -45,6 +47,10 @@ format:
 # Run tests with coverage
 coverage:
 	pytest tests/ --cov=app --cov-report=term-missing --cov-report=html --cov-fail-under=80
+
+# Run all quality checks
+check: test lint typecheck
+	@echo "✅ All quality checks passed!"
 
 # Clean up temporary files
 clean:
@@ -81,3 +87,7 @@ docker-coverage:
 # Format code in Docker container
 docker-format:
 	docker compose exec app make format
+
+# Run all quality checks in Docker container
+docker-check:
+	docker compose exec app make check
