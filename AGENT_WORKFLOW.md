@@ -45,12 +45,14 @@ This document outlines how Cursor agents can systematically work through the ret
   - ✅ **COMPLETED**: EP-2-T2 (SQLAlchemy models) - PR #101
   - ✅ **COMPLETED**: EP-2-T4 (Storage backend) - PR #100
   - 🔄 **BLOCKED**: EP-2-T3 (Scenario versioning) - low priority
-- **Phase 3 (Simulation Engines)**: 🔄 **IN PROGRESS** - 4/5 tickets completed
+- **Phase 3 (Simulation Engines)**: ✅ **COMPLETED** - All tickets completed
   - ✅ **COMPLETED**: EP-3-T1 (Time grid & unit system) - ready for PR
   - ✅ **COMPLETED**: EP-3-T2 (Mortgage amortization module) - ready for PR
   - ✅ **COMPLETED**: EP-3-T3 (Baseline expenses & lumpy events) - ready for PR
   - ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
-  - Next: EP-3-T5 (Social Security stub)
+  - ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
+- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 0/5 tickets completed
+  - Next: EP-4-T1 (Random returns generator)
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)
@@ -72,13 +74,13 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-2-T3: Scenario versioning & immutable base+diff 🔄 **BLOCKED** (low priority)
 - EP-2-T4: Storage backend ✅ **COMPLETED** (PR #100)
 
-### Phase 3: Simulation Engines 🔄 **IN PROGRESS**
+### Phase 3: Simulation Engines ✅ **COMPLETED**
 **Order 13-19**: Core simulation logic
 - EP-3-T1: Time grid & unit system (annual; real vs nominal) ✅ **COMPLETED**
 - EP-3-T2: Mortgage amortization module ✅ **COMPLETED**
 - EP-3-T3: Baseline expenses & lumpy events ✅ **COMPLETED**
-- EP-3-T4: Account balance evolution (taxable/trad/Roth)
-- EP-3-T5: Social Security stub (fixed input benefit)
+- EP-3-T4: Account balance evolution (taxable/trad/Roth) ✅ **COMPLETED**
+- EP-3-T5: Social Security stub (fixed input benefit) ✅ **COMPLETED**
 - EP-4-T1: Random returns generator (normal/lognormal selectable)
 - EP-4-T2: Correlated draws via covariance (Cholesky)
 - EP-4-T3: Portfolio evolution w/ annual rebalance

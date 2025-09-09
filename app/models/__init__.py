@@ -41,6 +41,13 @@ from .account_evolution import (
     calculate_portfolio_return,
     validate_account_balance_consistency,
 )
+from .social_security import (
+    SocialSecurityBenefit,
+    SocialSecurityEngine,
+    create_social_security_engine_from_scenario,
+    validate_social_security_timing,
+    calculate_social_security_present_value,
+)
 
 __all__ = [
     "Scenario",
@@ -76,4 +83,9 @@ __all__ = [
     "create_account_evolution_engine_from_scenario",
     "calculate_portfolio_return",
     "validate_account_balance_consistency",
+    "SocialSecurityBenefit",
+    "SocialSecurityEngine",
+    "create_social_security_engine_from_scenario",
+    "validate_social_security_timing",
+    "calculate_social_security_present_value",
 ]
