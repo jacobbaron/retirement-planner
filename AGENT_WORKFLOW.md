@@ -109,10 +109,12 @@ For each ticket:
    ```
 
 2. **Implement the ticket**:
+   - **Start Docker environment**: `docker compose up -d` (if not already running)
    - Follow the acceptance criteria exactly
    - Write tests as specified
-   - Ensure all tests pass
-   - Run linting and type checking
+   - **Run tests in container**: `docker compose exec app make test`
+   - **Run linting in container**: `docker compose exec app make lint`
+   - **Run type checking in container**: `docker compose exec app make typecheck`
 
 3. **Update changelog**:
    ```bash
@@ -221,6 +223,10 @@ cat AGENT_WORKFLOW.md
 
 # Check if changelog exists
 ls -la CHANGELOG.md
+
+# Check if Docker is available (required for development)
+docker --version
+docker compose --version
 ```
 
 To find the next ticket, run these commands in order:
@@ -252,9 +258,12 @@ Once you find a phase with open tickets:
 
 To implement a ticket:
 - Create a feature branch: `git checkout -b feature/EP-X-TY-description`
+- **Use Docker for development**: `docker compose up -d` (after EP-1-T5 is complete)
+- **Note**: For EP-1-T1 through EP-1-T4, work locally first, then ensure Docker compatibility in EP-1-T5
 - Follow the acceptance criteria exactly
 - Write the specified tests
-- Ensure all tests pass
+- Ensure all tests pass: `docker compose exec app make test` (or `make test` for early tickets)
+- Run linting: `docker compose exec app make lint` (or `make lint` for early tickets)
 - Create a pull request
 
 Do not proceed to the next ticket until the current PR is merged.
@@ -263,12 +272,13 @@ Do not proceed to the next ticket until the current PR is merged.
 ## Quality Gates
 
 Each implementation must pass:
-- [ ] All tests pass (`make test`)
-- [ ] Linting passes (`make lint`)
-- [ ] Type checking passes (`make typecheck`)
-- [ ] Coverage ≥80% (`make coverage`)
+- [ ] All tests pass (`docker compose exec app make test`)
+- [ ] Linting passes (`docker compose exec app make lint`)
+- [ ] Type checking passes (`docker compose exec app make typecheck`)
+- [ ] Coverage ≥80% (`docker compose exec app make coverage`)
 - [ ] Acceptance criteria met
 - [ ] Dependencies satisfied
+- [ ] Docker environment working (`docker compose up -d` and health check passes)
 
 ## Error Handling
 
