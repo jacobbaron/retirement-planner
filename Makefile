@@ -38,7 +38,7 @@ test:
 
 # Run linting
 lint:
-	flake8 app/ tests/ --max-line-length=88 --extend-ignore=E203,W503
+	flake8 app/ tests/ --max-line-length=88 --extend-ignore=E203,W503,E501 --per-file-ignores="tests/*:F401,F841"
 
 # Run type checking
 typecheck:
@@ -46,6 +46,12 @@ typecheck:
 
 # Format code
 format:
+	black app/ tests/ --line-length=88
+	isort app/ tests/ --profile=black
+
+# Auto-fix common issues (unused imports/vars, formatting, imports)
+autofix:
+	autoflake --in-place --remove-all-unused-imports --remove-unused-variables -r app tests
 	black app/ tests/ --line-length=88
 	isort app/ tests/ --profile=black
 
@@ -92,6 +98,10 @@ docker-coverage:
 # Format code in Docker container
 docker-format:
 	docker compose exec app make format
+
+# Run autofix inside Docker container
+docker-autofix:
+	docker compose exec app make autofix
 
 # Run all quality checks in Docker container
 docker-check:

@@ -10,40 +10,39 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=False,
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
     )
 
     # Application Environment
     app_env: str = Field(default="development", alias="APP_ENV")
-    
+
     # Flask Configuration
     secret_key: str = Field(..., alias="SECRET_KEY")
     flask_app: str = Field(default="wsgi.py", alias="FLASK_APP")
     flask_env: str = Field(default="development", alias="FLASK_ENV")
-    
+
     # Database Configuration
     db_url: str = Field(
         default="postgresql://retirement_user:retirement_password@localhost:5432/retirement_planner",
-        alias="DB_URL"
+        alias="DB_URL",
     )
-    
+
     # Redis Configuration
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
-    
+
     # Storage Configuration
     storage_type: str = Field(default="local", alias="STORAGE_TYPE")
     storage_base_path: str = Field(default="storage", alias="STORAGE_BASE_PATH")
-    
+
     # S3 Storage Configuration (when storage_type="s3")
     s3_bucket_name: Optional[str] = Field(default=None, alias="S3_BUCKET_NAME")
     s3_region_name: str = Field(default="us-east-1", alias="S3_REGION_NAME")
     s3_access_key_id: Optional[str] = Field(default=None, alias="S3_ACCESS_KEY_ID")
-    s3_secret_access_key: Optional[str] = Field(default=None, alias="S3_SECRET_ACCESS_KEY")
+    s3_secret_access_key: Optional[str] = Field(
+        default=None, alias="S3_SECRET_ACCESS_KEY"
+    )
     s3_prefix: str = Field(default="", alias="S3_PREFIX")
-    
+
     # Logging Configuration
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
@@ -72,7 +71,7 @@ class Settings(BaseSettings):
         if v.upper() not in allowed_levels:
             raise ValueError(f"LOG_LEVEL must be one of {allowed_levels}")
         return v.upper()
-    
+
     @field_validator("storage_type")
     @classmethod
     def validate_storage_type(cls, v):

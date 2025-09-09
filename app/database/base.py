@@ -5,11 +5,10 @@ This module provides the SQLAlchemy base class, engine, and session management
 for the retirement planner application.
 """
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
-import os
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from app.config import get_settings
 
@@ -30,7 +29,7 @@ def get_engine():
             settings.db_url,
             echo=settings.app_env == "development",  # Log SQL in development
             pool_pre_ping=True,  # Verify connections before use
-            pool_recycle=3600,   # Recycle connections after 1 hour
+            pool_recycle=3600,  # Recycle connections after 1 hour
         )
     return _engine
 

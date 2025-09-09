@@ -6,74 +6,103 @@ runs, and ledger rows.
 """
 
 from datetime import datetime
+
 from sqlalchemy import (
-    Column, Integer, String, DateTime, ForeignKey, Text, 
-    Numeric, Index, CheckConstraint
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
 )
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 from .base import Base
 
 
 class User(Base):
     """User model for authentication and profile information."""
-    
-    __tablename__ = 'users'
-    
+
+    __tablename__ = "users"
+
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    
+    updated_at = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+
     # Relationships
-    versioned_scenarios = relationship("VersionedScenario", back_populates="user", cascade="all, delete-orphan")
-    
+    versioned_scenarios = relationship(
+        "VersionedScenario", back_populates="user", cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', name='{self.name}')>"
 
 
 class Run(Base):
     """Run model for tracking simulation runs."""
-    
-    __tablename__ = 'runs'
-    
+
+    __tablename__ = "runs"
+
     id = Column(Integer, primary_key=True, index=True)
-    versioned_scenario_id = Column(Integer, ForeignKey('versioned_scenarios.id', ondelete='CASCADE'), nullable=False, index=True)
-    status = Column(String(50), nullable=False, default='pending', index=True)
-    run_type = Column(String(50), nullable=False, default='monte_carlo')  # monte_carlo, deterministic, historical
+    versioned_scenario_id = Column(
+        Integer,
+        ForeignKey("versioned_scenarios.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    status = Column(String(50), nullable=False, default="pending", index=True)
+    run_type = Column(
+        String(50), nullable=False, default="monte_carlo"
+    )  # monte_carlo, deterministic, historical
     num_simulations = Column(Integer, default=10000)
     results = Column(JSONB)  # Stores simulation results
     error_message = Column(Text)  # Store error details if run failed
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     started_at = Column(DateTime)
     completed_at = Column(DateTime)
-    
+
     # Relationships
     versioned_scenario = relationship("VersionedScenario", back_populates="runs")
-    ledger_rows = relationship("LedgerRow", back_populates="run", cascade="all, delete-orphan")
-    
+    ledger_rows = relationship(
+        "LedgerRow", back_populates="run", cascade="all, delete-orphan"
+    )
+
     # Constraints
     __table_args__ = (
-        CheckConstraint("status IN ('pending', 'running', 'completed', 'failed')", name='ck_run_status'),
-        CheckConstraint("run_type IN ('monte_carlo', 'deterministic', 'historical')", name='ck_run_type'),
-        CheckConstraint("num_simulations > 0", name='ck_num_simulations_positive'),
-        Index('idx_runs_scenario_status', 'versioned_scenario_id', 'status'),
-        Index('idx_runs_created', 'created_at'),
+        CheckConstraint(
+            "status IN ('pending', 'running', 'completed', 'failed')",
+            name="ck_run_status",
+        ),
+        CheckConstraint(
+            "run_type IN ('monte_carlo', 'deterministic', 'historical')",
+            name="ck_run_type",
+        ),
+        CheckConstraint("num_simulations > 0", name="ck_num_simulations_positive"),
+        Index("idx_runs_scenario_status", "versioned_scenario_id", "status"),
+        Index("idx_runs_created", "created_at"),
     )
-    
+
     def __repr__(self):
         return f"<Run(id={self.id}, versioned_scenario_id={self.versioned_scenario_id}, status='{self.status}')>"
 
 
 class LedgerRow(Base):
     """LedgerRow model for storing detailed cashflow/transaction data."""
-    
-    __tablename__ = 'ledger_rows'
-    
+
+    __tablename__ = "ledger_rows"
+
     id = Column(Integer, primary_key=True, index=True)
-    run_id = Column(Integer, ForeignKey('runs.id', ondelete='CASCADE'), nullable=False, index=True)
+    run_id = Column(
+        Integer, ForeignKey("runs.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     year = Column(Integer, nullable=False, index=True)
     month = Column(Integer, default=1)  # 1-12, default to annual
     account_type = Column(String(50), nullable=False, index=True)
@@ -82,54 +111,73 @@ class LedgerRow(Base):
     amount = Column(Numeric(15, 2), nullable=False)
     balance_after = Column(Numeric(15, 2))  # Account balance after this transaction
     description = Column(Text)
-    
+
     # Relationships
     run = relationship("Run", back_populates="ledger_rows")
-    
+
     # Constraints and indexes
     __table_args__ = (
-        CheckConstraint("year >= 1900 AND year <= 2100", name='ck_year_range'),
-        CheckConstraint("month >= 1 AND month <= 12", name='ck_month_range'),
-        CheckConstraint("account_type IN ('taxable', 'traditional_401k', 'roth_401k', 'traditional_ira', 'roth_ira', 'hsa', 'college_529', 'cash')", name='ck_account_type'),
-        CheckConstraint("transaction_type IN ('contribution', 'withdrawal', 'growth', 'dividend', 'interest', 'fee', 'rebalance', 'transfer')", name='ck_transaction_type'),
-        Index('idx_ledger_run_year', 'run_id', 'year'),
-        Index('idx_ledger_account_type', 'account_type'),
-        Index('idx_ledger_transaction_type', 'transaction_type'),
-        Index('idx_ledger_year_month', 'year', 'month'),
+        CheckConstraint("year >= 1900 AND year <= 2100", name="ck_year_range"),
+        CheckConstraint("month >= 1 AND month <= 12", name="ck_month_range"),
+        CheckConstraint(
+            "account_type IN ('taxable', 'traditional_401k', 'roth_401k', 'traditional_ira', 'roth_ira', 'hsa', 'college_529', 'cash')",
+            name="ck_account_type",
+        ),
+        CheckConstraint(
+            "transaction_type IN ('contribution', 'withdrawal', 'growth', 'dividend', 'interest', 'fee', 'rebalance', 'transfer')",
+            name="ck_transaction_type",
+        ),
+        Index("idx_ledger_run_year", "run_id", "year"),
+        Index("idx_ledger_account_type", "account_type"),
+        Index("idx_ledger_transaction_type", "transaction_type"),
+        Index("idx_ledger_year_month", "year", "month"),
     )
-    
+
     def __repr__(self):
         return f"<LedgerRow(id={self.id}, run_id={self.run_id}, year={self.year}, account='{self.account_name}', type='{self.transaction_type}', amount={self.amount})>"
 
 
 class VersionedScenario(Base):
     """Simple versioned scenario model that stores full copies."""
-    
-    __tablename__ = 'versioned_scenarios'
-    
+
+    __tablename__ = "versioned_scenarios"
+
     id = Column(Integer, primary_key=True, index=True)
     scenario_id = Column(String(255), unique=True, nullable=False, index=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     name = Column(String(255), nullable=False)
     description = Column(Text)
     scenario_data = Column(JSONB, nullable=False)  # Full scenario copy
-    parent_version_id = Column(Integer, ForeignKey('versioned_scenarios.id', ondelete='SET NULL'), nullable=True, index=True)
+    parent_version_id = Column(
+        Integer,
+        ForeignKey("versioned_scenarios.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     version = Column(String(50), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    
+    updated_at = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+
     # Relationships
     user = relationship("User")
-    parent_version = relationship("VersionedScenario", remote_side=[id], backref="child_versions")
-    runs = relationship("Run", back_populates="versioned_scenario", cascade="all, delete-orphan")
-    
+    parent_version = relationship(
+        "VersionedScenario", remote_side=[id], backref="child_versions"
+    )
+    runs = relationship(
+        "Run", back_populates="versioned_scenario", cascade="all, delete-orphan"
+    )
+
     # Indexes
     __table_args__ = (
-        Index('idx_versioned_scenarios_scenario_id', 'scenario_id'),
-        Index('idx_versioned_scenarios_user_created', 'user_id', 'created_at'),
-        Index('idx_versioned_scenarios_parent_version', 'parent_version_id'),
-        Index('idx_versioned_scenarios_name', 'name'),
+        Index("idx_versioned_scenarios_scenario_id", "scenario_id"),
+        Index("idx_versioned_scenarios_user_created", "user_id", "created_at"),
+        Index("idx_versioned_scenarios_parent_version", "parent_version_id"),
+        Index("idx_versioned_scenarios_name", "name"),
     )
-    
+
     def __repr__(self):
         return f"<VersionedScenario(id={self.id}, scenario_id='{self.scenario_id}', name='{self.name}', version='{self.version}')>"

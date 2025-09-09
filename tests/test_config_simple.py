@@ -1,7 +1,7 @@
 """Simple tests for configuration management."""
 
-import tempfile
 import os
+import tempfile
 from unittest.mock import patch
 
 import pytest
@@ -21,7 +21,11 @@ class TestConfigSimple:
             assert settings.secret_key == "valid-secret-123"
 
         # Test with placeholder secret key (should fail)
-        with patch.dict(os.environ, {"SECRET_KEY": "your-secret-key-here-change-in-production"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {"SECRET_KEY": "your-secret-key-here-change-in-production"},
+            clear=True,
+        ):
             with pytest.raises(ValidationError) as exc_info:
                 Settings()
             assert "SECRET_KEY must be set to a secure value" in str(exc_info.value)
@@ -29,12 +33,20 @@ class TestConfigSimple:
     def test_app_env_validation_works(self):
         """Test that APP_ENV validation works correctly."""
         # Test with valid environment
-        with patch.dict(os.environ, {"SECRET_KEY": "valid-secret-123", "APP_ENV": "production"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {"SECRET_KEY": "valid-secret-123", "APP_ENV": "production"},
+            clear=True,
+        ):
             settings = Settings()
             assert settings.app_env == "production"
 
         # Test with invalid environment (should fail)
-        with patch.dict(os.environ, {"SECRET_KEY": "valid-secret-123", "APP_ENV": "invalid"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {"SECRET_KEY": "valid-secret-123", "APP_ENV": "invalid"},
+            clear=True,
+        ):
             with pytest.raises(ValidationError) as exc_info:
                 Settings()
             assert "APP_ENV must be one of" in str(exc_info.value)
@@ -42,12 +54,20 @@ class TestConfigSimple:
     def test_log_level_validation_works(self):
         """Test that LOG_LEVEL validation works correctly."""
         # Test with valid log level
-        with patch.dict(os.environ, {"SECRET_KEY": "valid-secret-123", "LOG_LEVEL": "DEBUG"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {"SECRET_KEY": "valid-secret-123", "LOG_LEVEL": "DEBUG"},
+            clear=True,
+        ):
             settings = Settings()
             assert settings.log_level == "DEBUG"
 
         # Test with invalid log level (should fail)
-        with patch.dict(os.environ, {"SECRET_KEY": "valid-secret-123", "LOG_LEVEL": "INVALID"}, clear=True):
+        with patch.dict(
+            os.environ,
+            {"SECRET_KEY": "valid-secret-123", "LOG_LEVEL": "INVALID"},
+            clear=True,
+        ):
             with pytest.raises(ValidationError) as exc_info:
                 Settings()
             assert "LOG_LEVEL must be one of" in str(exc_info.value)
@@ -55,7 +75,7 @@ class TestConfigSimple:
     def test_env_file_loading_works(self):
         """Test that .env file loading works correctly."""
         # Create a temporary .env file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.env', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".env", delete=False) as f:
             f.write("SECRET_KEY=test-secret-from-file\n")
             f.write("APP_ENV=testing\n")
             f.write("LOG_LEVEL=ERROR\n")
