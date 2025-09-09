@@ -211,7 +211,7 @@ class SimpleScenarioVersioningService:
             raise ValueError(f"Scenario {scenario_id} not found")
 
         # Walk up to find root
-        while current.parent_version_id:
+        while current and current.parent_version_id:
             current = (
                 self.db.query(VersionedScenario)
                 .filter(VersionedScenario.id == current.parent_version_id)

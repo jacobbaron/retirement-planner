@@ -201,7 +201,7 @@ class S3StorageService(StorageService):
 
             response = self.s3_client.get_object(Bucket=self.bucket_name, Key=s3_key)
 
-            return response["Body"].read()
+            return response["Body"].read()  # type: ignore[no-any-return]
 
         except ClientError as e:
             error_code = e.response["Error"]["Code"]

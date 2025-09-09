@@ -42,7 +42,7 @@ class User(Base):
         "VersionedScenario", back_populates="user", cascade="all, delete-orphan"
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<User(id={self.id}, email='{self.email}', name='{self.name}')>"
 
 
@@ -90,7 +90,7 @@ class Run(Base):
         Index("idx_runs_created", "created_at"),
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Run(id={self.id}, versioned_scenario_id={self.versioned_scenario_id}, status='{self.status}')>"
 
 
@@ -133,7 +133,7 @@ class LedgerRow(Base):
         Index("idx_ledger_year_month", "year", "month"),
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<LedgerRow(id={self.id}, run_id={self.run_id}, year={self.year}, account='{self.account_name}', type='{self.transaction_type}', amount={self.amount})>"
 
 
@@ -179,5 +179,5 @@ class VersionedScenario(Base):
         Index("idx_versioned_scenarios_name", "name"),
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<VersionedScenario(id={self.id}, scenario_id='{self.scenario_id}', name='{self.name}', version='{self.version}')>"

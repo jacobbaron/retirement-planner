@@ -59,13 +59,13 @@ class AssetAllocation(BaseModel):
 
     @field_validator("stocks", "bonds", "cash")
     @classmethod
-    def validate_allocation(cls, v):
+    def validate_allocation(cls, v: float) -> float:
         if not 0 <= v <= 1:
             raise ValueError("Allocation must be between 0 and 1")
         return v
 
     @model_validator(mode="after")
-    def validate_total_allocation(self):
+    def validate_total_allocation(self) -> "AssetAllocation":
         total = self.stocks + self.bonds + self.cash
         if abs(total - 1.0) > 0.001:
             raise ValueError(f"Asset allocation must sum to 1.0, got {total}")
@@ -236,7 +236,7 @@ class Salary(BaseModel):
     bonus: float = Field(default=0, ge=0, description="Annual bonus amount")
 
     @model_validator(mode="after")
-    def validate_end_year(self):
+    def validate_end_year(self) -> "Salary":
         if self.end_year < self.start_year:
             raise ValueError("End year must be >= start year")
         return self
@@ -267,7 +267,7 @@ class Pension(BaseModel):
     cola: float = Field(default=0.02, description="Annual cost of living adjustment")
 
     @model_validator(mode="after")
-    def validate_end_year(self):
+    def validate_end_year(self) -> "Pension":
         if self.end_year < self.start_year:
             raise ValueError("End year must be >= start year")
         return self
@@ -283,7 +283,7 @@ class OtherIncome(BaseModel):
     growth_rate: float = Field(default=0, description="Annual growth rate")
 
     @model_validator(mode="after")
-    def validate_end_year(self):
+    def validate_end_year(self) -> "OtherIncome":
         if self.end_year < self.start_year:
             raise ValueError("End year must be >= start year")
         return self

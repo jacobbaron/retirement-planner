@@ -57,7 +57,7 @@ class LocalStorageService(StorageService):
 
         # Remove any .. attempts by resolving the path
         path_parts = safe_path.split("/")
-        sanitized_parts = []
+        sanitized_parts: list[str] = []
         for part in path_parts:
             if part == "..":
                 # Go up one level if possible, but don't go above base_path
@@ -265,7 +265,7 @@ class LocalStorageService(StorageService):
             List of file paths/keys
         """
         try:
-            files = []
+            files: list[str] = []
             prefix_path = self._get_file_path(prefix) if prefix else self.base_path
 
             if not prefix_path.exists():

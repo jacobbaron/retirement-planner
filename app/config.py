@@ -48,7 +48,7 @@ class Settings(BaseSettings):
 
     @field_validator("secret_key")
     @classmethod
-    def validate_secret_key(cls, v):
+    def validate_secret_key(cls, v: str) -> str:
         """Ensure SECRET_KEY is provided and not a placeholder."""
         if not v or v == "your-secret-key-here-change-in-production":
             raise ValueError("SECRET_KEY must be set to a secure value")
@@ -56,7 +56,7 @@ class Settings(BaseSettings):
 
     @field_validator("app_env")
     @classmethod
-    def validate_app_env(cls, v):
+    def validate_app_env(cls, v: str) -> str:
         """Validate application environment."""
         allowed_envs = {"development", "testing", "production"}
         if v not in allowed_envs:
@@ -65,7 +65,7 @@ class Settings(BaseSettings):
 
     @field_validator("log_level")
     @classmethod
-    def validate_log_level(cls, v):
+    def validate_log_level(cls, v: str) -> str:
         """Validate log level."""
         allowed_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
         if v.upper() not in allowed_levels:
@@ -74,7 +74,7 @@ class Settings(BaseSettings):
 
     @field_validator("storage_type")
     @classmethod
-    def validate_storage_type(cls, v):
+    def validate_storage_type(cls, v: str) -> str:
         """Validate storage type."""
         allowed_types = {"local", "s3"}
         if v not in allowed_types:
@@ -85,8 +85,8 @@ class Settings(BaseSettings):
 def get_settings(env_file: Optional[str] = None) -> Settings:
     """Get application settings instance."""
     if env_file is not None:
-        return Settings(_env_file=env_file)
-    return Settings()
+        return Settings(_env_file=env_file)  # type: ignore[call-arg]
+    return Settings()  # type: ignore[call-arg]
 
 
 # Global settings instance - will be created when first imported

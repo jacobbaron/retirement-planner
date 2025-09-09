@@ -35,6 +35,8 @@ install:
 # Run tests
 test:
 	pytest tests/ -v
+	make lint
+	make typecheck
 
 # Run linting
 lint:
