@@ -1,9 +1,10 @@
 """Retirement Planner Flask Application Factory."""
 
-import os
 from typing import Optional
 
 from flask import Flask
+
+from app.config import get_global_settings
 
 
 def create_app(config_name: Optional[str] = None) -> Flask:
@@ -17,12 +18,13 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     """
     app = Flask(__name__)
 
-    # Basic configuration
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
-    app.config["DATABASE_URL"] = os.getenv(
-        "DATABASE_URL", "sqlite:///retirement_planner.db"
-    )
-    app.config["REDIS_URL"] = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    # Configuration from Pydantic Settings
+    settings = get_global_settings()
+    app.config["SECRET_KEY"] = settings.secret_key
+    app.config["DATABASE_URL"] = settings.db_url
+    app.config["REDIS_URL"] = settings.redis_url
+    app.config["ENV"] = settings.flask_env
+    app.config["DEBUG"] = settings.app_env == "development"
 
     # Register blueprints
     from app.blueprints.health import health_bp
