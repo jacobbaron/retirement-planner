@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-2-T2] SQLAlchemy models - User, Scenario, Run, LedgerRow (v0.7.0)
 - [EP-2-T4] S3/local storage for exports & run artifacts (v0.8.0)
 - [EP-16-T1] GitHub Actions CI workflow for automated testing (v0.9.0)
+- [EP-5-T1] Cursor rules for automated agent guidance (v0.10.0)
 
 ### Changed
 

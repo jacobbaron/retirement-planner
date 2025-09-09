@@ -1,0 +1,264 @@
+---
+description: GitHub issue workflow for ticket selection, status management, progress tracking, and post-merge cleanup.
+globs: []
+alwaysApply: false
+---
+
+# Ticket Management Rules
+
+This rule guides the GitHub issue workflow for selecting, managing, and tracking tickets throughout the development lifecycle.
+
+## Context
+- Applies when working with GitHub issues and pull requests
+- Ensures proper ticket lifecycle management
+- Maintains clear communication and status tracking
+
+## Ticket Selection Logic
+
+### 1. Phase-Based Selection
+```bash
+# Check phases in order until you find open tickets
+gh issue list --label "phase:1" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+
+# If Phase 1 is empty, check Phase 2
+gh issue list --label "phase:2" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+
+# Continue through phases
+gh issue list --label "phase:3" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+gh issue list --label "phase:4" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+gh issue list --label "phase:5" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+```
+
+### 2. Alternative: Check Blocked Tickets
+```bash
+# Check if any blocked tickets are now unblocked
+gh issue list --label "status:blocked" --state open
+```
+
+### 3. Selection Criteria
+- **Pick the first ticket** in the list (they should be in order)
+- **Verify dependencies** are completed
+- **Check phase completion** before moving to next phase
+- **Avoid tickets with status labels**: in-progress, review, completed, blocked
+
+## Ticket Assignment and Status Management
+
+### 1. Start Work on Ticket
+```bash
+# Read the ticket thoroughly
+gh issue view [ISSUE_NUMBER]
+
+# Read all comments for additional context
+# (Check the full issue page in browser)
+
+# Mark as in-progress and assign to yourself
+gh issue edit [ISSUE_NUMBER] --add-label "status:in-progress" --add-assignee @me
+
+# Add starting comment
+gh issue comment [ISSUE_NUMBER] --body "🤖 Agent starting work on this ticket
+
+I'll implement the acceptance criteria and create a pull request for review."
+```
+
+### 2. Progress Updates
+```bash
+# Add progress comment when implementation is complete
+gh issue comment [ISSUE_NUMBER] --body "✅ **Implementation complete**
+
+- Created feature branch: feature/EP-X-TY-short-description
+- Implemented all acceptance criteria
+- Added tests as specified
+- Updated changelog and workflow documentation
+- Created PR: #[PR_NUMBER]
+- ✅ **GitHub Actions CI passing** - All tests, linting, and checks pass
+
+🤖 Agent waiting for human review and merge."
+```
+
+### 3. Status Label Transitions
+```bash
+# When implementation is complete and PR is created
+gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:review"
+
+# When PR is merged and ticket is complete
+gh issue edit [ISSUE_NUMBER] --remove-label "status:review" --add-label "status:completed"
+```
+
+## Error Handling and Blocking
+
+### 1. When Ticket Cannot Be Implemented
+```bash
+# Add detailed comment explaining the issue
+gh issue comment [ISSUE_NUMBER] --body "❌ **Implementation blocked**
+
+**Issue**: [Detailed explanation of why ticket cannot be implemented]
+
+**Dependencies**: [List any missing dependencies or prerequisites]
+
+**Next Steps**: [Suggestions for resolving the block]
+
+**Agent Status**: Moving to next available ticket."
+```
+
+### 2. Update Status to Blocked
+```bash
+# Remove in-progress label and add blocked label
+gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:blocked"
+```
+
+### 3. Move to Next Ticket
+```bash
+# Find next available ticket
+gh issue list --label "phase:X" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+```
+
+## Post-Merge Cleanup
+
+### 1. After PR is Merged
+```bash
+# Update local repository
+git checkout main
+git pull origin main
+
+# Update issue status
+gh issue edit [ISSUE_NUMBER] --remove-label "status:review" --add-label "status:completed"
+```
+
+### 2. Close Ticket with Summary
+```bash
+# Close with detailed completion comment
+gh issue close [ISSUE_NUMBER] --comment "✅ **COMPLETED**
+
+**Implementation Summary**:
+- All acceptance criteria met
+- Tests implemented and passing
+- Code reviewed and merged in PR #[pr-number]
+- Changelog and workflow documentation updated
+
+**Files Modified**:
+- [List key files that were modified]
+
+**Testing**:
+- [ ] Unit tests added and passing
+- [ ] Integration tests added and passing
+- [ ] Code coverage ≥80%
+- [ ] All quality gates passed
+
+🤖 **Agent Status**: Ready for next ticket in sequence."
+```
+
+### 3. Find Next Ticket
+```bash
+# Check next phase or continue with current phase
+gh issue list --label "phase:1" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+gh issue list --label "phase:2" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+# etc.
+```
+
+## Status Label Definitions
+
+### Primary Status Labels
+- **status:in-progress**: Agent is actively working on the ticket
+- **status:review**: Implementation complete, PR created, waiting for human review
+- **status:completed**: PR merged, ticket fully complete
+- **status:blocked**: Cannot proceed due to missing dependencies or issues
+
+### Phase Labels
+- **phase:1**: Foundation (infrastructure, tooling, Docker)
+- **phase:2**: Core Data & Engine (models, storage, basic engine)
+- **phase:3**: Simulation Engines (portfolio, returns, withdrawal rules)
+- **phase:4**: API and UI (endpoints, forms, dashboards)
+- **phase:5**: Domain Modules (tax, housing, college, benefits)
+- **phase:6**: CI/CD & DevOps (deployment, monitoring, security)
+
+### Priority Labels
+- **priority:high**: Critical for project progress
+- **priority:medium**: Important but not blocking
+- **priority:low**: Nice to have, can be deferred
+
+## Examples
+
+### ✅ Good: Proper Ticket Management
+```bash
+# 1. Find next available ticket
+gh issue list --label "phase:2" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+
+# 2. Read ticket thoroughly
+gh issue view 123
+
+# 3. Assign and start work
+gh issue edit 123 --add-label "status:in-progress" --add-assignee @me
+gh issue comment 123 --body "🤖 Agent starting work on this ticket"
+
+# 4. Update status when complete
+gh issue edit 123 --remove-label "status:in-progress" --add-label "status:review"
+gh issue comment 123 --body "✅ Implementation complete..."
+
+# 5. Close when merged
+gh issue close 123 --comment "✅ COMPLETED..."
+```
+
+### ❌ Bad: Poor Ticket Management
+```bash
+# Agent doesn't read ticket thoroughly
+# Agent doesn't update status labels
+# Agent doesn't add progress comments
+# Agent doesn't close tickets properly
+# Agent works on multiple tickets simultaneously
+```
+
+## Communication Standards
+
+### Comment Templates
+
+#### Starting Work
+```
+🤖 Agent starting work on this ticket
+
+I'll implement the acceptance criteria and create a pull request for review.
+```
+
+#### Implementation Complete
+```
+✅ **Implementation complete**
+
+- Created feature branch: feature/EP-X-TY-short-description
+- Implemented all acceptance criteria
+- Added tests as specified
+- Updated changelog and workflow documentation
+- Created PR: #[PR_NUMBER]
+- ✅ **GitHub Actions CI passing** - All tests, linting, and checks pass
+
+🤖 Agent waiting for human review and merge.
+```
+
+#### Blocked
+```
+❌ **Implementation blocked**
+
+**Issue**: [Detailed explanation]
+
+**Dependencies**: [List missing dependencies]
+
+**Next Steps**: [Suggestions for resolution]
+
+**Agent Status**: Moving to next available ticket.
+```
+
+#### Completed
+```
+✅ **COMPLETED**
+
+**Implementation Summary**:
+- All acceptance criteria met
+- Tests implemented and passing
+- Code reviewed and merged in PR #[pr-number]
+- Changelog and workflow documentation updated
+
+🤖 **Agent Status**: Ready for next ticket in sequence.
+```
+
+## References
+- @AGENT_WORKFLOW.md - Complete workflow documentation
+- GitHub Issues API documentation
+- Project phase definitions and ticket sequencing

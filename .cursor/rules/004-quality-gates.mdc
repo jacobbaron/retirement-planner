@@ -1,0 +1,353 @@
+---
+description: Testing and validation requirements including test execution, linting, type checking, coverage, and CI verification.
+globs:
+  - "tests/**/*.py"
+  - "app/**/*.py"
+  - "alembic/**/*.py"
+alwaysApply: false
+---
+
+# Quality Gates Rules
+
+This rule enforces testing and validation requirements to ensure code quality and reliability in the retirement planner project.
+
+## Context
+- Applies when working on Python files in app/, tests/, or alembic/ directories
+- Ensures all code meets quality standards before merging
+- Enforces comprehensive testing and validation processes
+
+## Quality Gate Requirements
+
+### 1. Test Execution
+All tests must pass before any code can be merged.
+
+```bash
+# Run all tests in Docker container
+docker compose exec app make test
+
+# Run specific test file
+docker compose exec app python -m pytest tests/test_specific.py
+
+# Run tests with verbose output
+docker compose exec app python -m pytest -v
+
+# Run tests with coverage
+docker compose exec app python -m pytest --cov=app
+```
+
+#### Test Requirements
+- **Unit tests** for all new functions and methods
+- **Integration tests** for API endpoints and database operations
+- **Edge case coverage** for error conditions and boundary values
+- **Mock external dependencies** (databases, APIs, file systems)
+- **Test data cleanup** after each test
+
+### 2. Linting and Code Style
+Code must pass all linting checks.
+
+```bash
+# Run linting in Docker container
+docker compose exec app make lint
+
+# Run specific linters
+docker compose exec app black --check app/ tests/
+docker compose exec app isort --check-only app/ tests/
+docker compose exec app flake8 app/ tests/
+```
+
+#### Linting Standards
+- **Black**: Code formatting (line length 88, string quotes)
+- **isort**: Import sorting and organization
+- **flake8**: Style guide enforcement (PEP 8)
+- **No warnings or errors** allowed
+
+### 3. Type Checking
+All code must pass type checking.
+
+```bash
+# Run type checking in Docker container
+docker compose exec app make typecheck
+
+# Run mypy directly
+docker compose exec app mypy app/ tests/
+```
+
+#### Type Checking Requirements
+- **Type hints** for all function signatures
+- **Return type annotations** for all functions
+- **Variable type annotations** for complex types
+- **No mypy errors** allowed
+- **Strict mode** enabled for new code
+
+### 4. Code Coverage
+Minimum 80% code coverage required.
+
+```bash
+# Run coverage analysis
+docker compose exec app make coverage
+
+# Generate coverage report
+docker compose exec app python -m pytest --cov=app --cov-report=html
+
+# View coverage report
+open htmlcov/index.html
+```
+
+#### Coverage Requirements
+- **Minimum 80% overall coverage**
+- **100% coverage** for critical business logic
+- **Branch coverage** for conditional statements
+- **Exception handling coverage** for error paths
+
+### 5. GitHub Actions CI Verification
+All CI workflows must pass before merging.
+
+```bash
+# Check CI status
+gh run list --limit 5
+
+# Watch latest run
+gh run watch [LATEST_RUN_ID]
+
+# View run details
+gh run view [RUN_ID]
+```
+
+#### CI Requirements
+- **All workflow jobs** must show green/checkmark
+- **No failed tests** in any environment
+- **No linting errors** in CI environment
+- **No type checking errors** in CI environment
+- **Coverage requirements** met in CI
+
+## Quality Gate Checklist
+
+Before creating any pull request, verify:
+
+- [ ] **All tests pass** (`docker compose exec app make test`)
+- [ ] **Linting passes** (`docker compose exec app make lint`)
+- [ ] **Type checking passes** (`docker compose exec app make typecheck`)
+- [ ] **Coverage ≥80%** (`docker compose exec app make coverage`)
+- [ ] **Acceptance criteria met** (from ticket)
+- [ ] **Dependencies satisfied** (all prerequisites completed)
+- [ ] **Docker environment working** (`docker compose up -d` and health check passes)
+- [ ] **Documentation updated** (CHANGELOG.md and AGENT_WORKFLOW.md)
+- [ ] **GitHub Actions CI passing** (all workflow jobs show green/checkmark)
+
+## Testing Standards
+
+### Unit Testing
+```python
+# Example unit test structure
+import pytest
+from unittest.mock import Mock, patch
+from app.models import User
+
+class TestUserModel:
+    def test_user_creation(self):
+        """Test user creation with valid data."""
+        user = User(name="John Doe", email="john@example.com")
+        assert user.name == "John Doe"
+        assert user.email == "john@example.com"
+    
+    def test_user_validation(self):
+        """Test user validation with invalid data."""
+        with pytest.raises(ValueError):
+            User(name="", email="invalid-email")
+    
+    @patch('app.models.send_email')
+    def test_user_notification(self, mock_send_email):
+        """Test user notification functionality."""
+        user = User(name="John Doe", email="john@example.com")
+        user.send_notification("Test message")
+        mock_send_email.assert_called_once_with("john@example.com", "Test message")
+```
+
+### Integration Testing
+```python
+# Example integration test structure
+import pytest
+from app import create_app
+from app.database import db
+
+@pytest.fixture
+def app():
+    """Create test application."""
+    app = create_app('testing')
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.drop_all()
+
+def test_api_endpoint(client):
+    """Test API endpoint integration."""
+    response = client.post('/api/users', json={
+        'name': 'John Doe',
+        'email': 'john@example.com'
+    })
+    assert response.status_code == 201
+    assert response.json['name'] == 'John Doe'
+```
+
+### Database Testing
+```python
+# Example database test structure
+import pytest
+from app.database import db
+from app.models import User
+
+def test_database_operations(app):
+    """Test database operations."""
+    with app.app_context():
+        # Create user
+        user = User(name="John Doe", email="john@example.com")
+        db.session.add(user)
+        db.session.commit()
+        
+        # Verify user exists
+        found_user = User.query.filter_by(email="john@example.com").first()
+        assert found_user is not None
+        assert found_user.name == "John Doe"
+```
+
+## Error Handling and Edge Cases
+
+### Test Error Conditions
+```python
+def test_error_handling():
+    """Test error handling and edge cases."""
+    # Test invalid input
+    with pytest.raises(ValueError):
+        process_invalid_data(None)
+    
+    # Test boundary conditions
+    assert process_boundary_value(0) == expected_result
+    assert process_boundary_value(100) == expected_result
+    
+    # Test exception handling
+    with pytest.raises(CustomException):
+        function_that_raises_exception()
+```
+
+### Mock External Dependencies
+```python
+@patch('app.external_api.make_request')
+def test_external_api_integration(mock_request):
+    """Test external API integration with mocking."""
+    mock_request.return_value = {'status': 'success', 'data': 'test'}
+    
+    result = call_external_api()
+    
+    assert result['status'] == 'success'
+    mock_request.assert_called_once_with('/api/endpoint')
+```
+
+## Performance Testing
+
+### Load Testing
+```python
+def test_performance():
+    """Test performance requirements."""
+    import time
+    
+    start_time = time.time()
+    result = expensive_operation()
+    end_time = time.time()
+    
+    # Ensure operation completes within acceptable time
+    assert (end_time - start_time) < 1.0  # 1 second
+    assert result is not None
+```
+
+## Examples
+
+### ✅ Good: Comprehensive Quality Gates
+```bash
+# 1. Run all quality gates
+docker compose exec app make test
+docker compose exec app make lint
+docker compose exec app make typecheck
+docker compose exec app make coverage
+
+# 2. Verify CI passes
+gh run list --limit 5
+gh run watch [LATEST_RUN_ID]
+
+# 3. Only proceed when all gates pass
+echo "All quality gates passed - ready for PR"
+```
+
+### ❌ Bad: Skipping Quality Gates
+```bash
+# Agent skips running tests
+# Agent doesn't check linting
+# Agent ignores type checking errors
+# Agent doesn't verify coverage
+# Agent creates PR without CI verification
+```
+
+## Quality Gate Failure Handling
+
+### When Tests Fail
+```bash
+# 1. Identify failing tests
+docker compose exec app python -m pytest -v
+
+# 2. Fix failing tests
+# ... fix implementation or tests ...
+
+# 3. Re-run tests
+docker compose exec app make test
+
+# 4. Only proceed when all tests pass
+```
+
+### When Linting Fails
+```bash
+# 1. Check linting errors
+docker compose exec app make lint
+
+# 2. Auto-fix formatting issues
+docker compose exec app black app/ tests/
+docker compose exec app isort app/ tests/
+
+# 3. Fix remaining issues manually
+# ... fix code style issues ...
+
+# 4. Re-run linting
+docker compose exec app make lint
+```
+
+### When Type Checking Fails
+```bash
+# 1. Check type errors
+docker compose exec app make typecheck
+
+# 2. Add missing type hints
+# ... add type annotations ...
+
+# 3. Re-run type checking
+docker compose exec app make typecheck
+```
+
+### When Coverage is Low
+```bash
+# 1. Check coverage report
+docker compose exec app make coverage
+
+# 2. Identify uncovered code
+open htmlcov/index.html
+
+# 3. Add tests for uncovered code
+# ... write additional tests ...
+
+# 4. Re-run coverage
+docker compose exec app make coverage
+```
+
+## References
+- @Makefile - Available quality gate commands
+- @AGENT_WORKFLOW.md - Complete workflow documentation
+- pytest documentation
+- mypy documentation
+- Black code formatter documentation
