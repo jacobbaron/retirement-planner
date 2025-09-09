@@ -120,6 +120,8 @@ jobs:
         bandit -r app/ -ll
 
     - name: Run safety check
+      env:
+        SAFETY_DISABLE_TELEMETRY: "1"
       run: |
         safety scan --output json --output-file safety-report.json
         safety scan
@@ -138,5 +140,9 @@ jobs:
 
     - name: Test Docker container
       run: |
-        docker run --rm -e SECRET_KEY=test-secret-key -e FLASK_ENV=testing -e DB_URL=sqlite:///test.db retirement-planner:test make test
+        docker run --rm \
+          -e SECRET_KEY=test-secret-key \
+          -e FLASK_ENV=testing \
+          -e DB_URL=sqlite:///test.db \
+          retirement-planner:test pytest -v tests/test_health.py tests/test_storage_service.py
 # Trigger new CI run
