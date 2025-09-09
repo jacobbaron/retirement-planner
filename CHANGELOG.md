@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-3-T3] Baseline expenses & lumpy events module (v0.14.0)
 - [EP-3-T4] Account balance evolution module (v0.15.0)
 - [EP-3-T5] Social Security stub (fixed input benefit) (v0.16.0)
+- [EP-3-T6] Income Engine (salary growth, bonuses, other income) (v0.17.0)
 
 ### Changed
 
