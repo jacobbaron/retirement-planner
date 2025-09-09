@@ -95,7 +95,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_ledger_rows_run_id'), 'ledger_rows', ['run_id'], unique=False)
     op.create_index(op.f('ix_ledger_rows_transaction_type'), 'ledger_rows', ['transaction_type'], unique=False)
     op.create_index(op.f('ix_ledger_rows_year'), 'ledger_rows', ['year'], unique=False)
-    op.drop_table('health_check')
     # ### end Alembic commands ###
 
 
