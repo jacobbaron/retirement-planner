@@ -137,9 +137,13 @@ For each ticket:
    Closes #[issue-number]"
    ```
 
-5. **Add progress comment to issue**:
+5. **Update status and add progress comment**:
    ```bash
-   gh issue comment [ISSUE_NUMBER] --body "✅ Implementation complete
+   # Remove in-progress label and add review label
+   gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:review"
+   
+   # Add progress comment
+   gh issue comment [ISSUE_NUMBER] --body "✅ **Implementation complete**
    
    - Created feature branch: feature/EP-X-TY-short-description
    - Implemented all acceptance criteria
@@ -147,7 +151,7 @@ For each ticket:
    - Updated changelog
    - Created PR: #[PR_NUMBER]
    
-   Waiting for review and merge."
+   🤖 Agent waiting for human review and merge."
    ```
 
 6. **Wait for review**: Agent should not proceed until PR is merged
@@ -167,8 +171,12 @@ After PR is merged:
    # This should be done when creating a release, but for now just note completion
    ```
 
-3. **Close the ticket with detailed comment**:
+3. **Mark as completed and close the ticket**:
    ```bash
+   # Update status label
+   gh issue edit [issue-number] --remove-label "status:review" --add-label "status:completed"
+   
+   # Close with detailed comment
    gh issue close [issue-number] --comment "✅ **COMPLETED**
 
    **Implementation Summary**:
@@ -177,7 +185,7 @@ After PR is merged:
    - Code reviewed and merged in PR #[pr-number]
    - Changelog updated
    
-   **Next Steps**: Ready for next ticket in sequence."
+   🤖 **Agent Status**: Ready for next ticket in sequence."
    ```
 
 4. **Find next ticket**:
@@ -217,24 +225,30 @@ ls -la CHANGELOG.md
 
 To find the next ticket, run these commands in order:
 ```bash
-# Check Phase 1 (foundation) first
-gh issue list --label "phase:1" --state open
+# Check Phase 1 (foundation) first - exclude tickets already in progress
+gh issue list --label "phase:1" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
 
 # If Phase 1 is empty, check Phase 2
-gh issue list --label "phase:2" --state open
+gh issue list --label "phase:2" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
 
 # Continue through phases until you find open tickets
-gh issue list --label "phase:3" --state open
-gh issue list --label "phase:4" --state open
-gh issue list --label "phase:5" --state open
+gh issue list --label "phase:3" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+gh issue list --label "phase:4" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+gh issue list --label "phase:5" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+```
+
+**Alternative: Check for blocked tickets that might be ready:**
+```bash
+# Check if any blocked tickets are now unblocked
+gh issue list --label "status:blocked" --state open
 ```
 
 Once you find a phase with open tickets:
 1. Pick the first ticket in the list (they should be in order)
 2. **Read the ticket thoroughly**: `gh issue view [ISSUE_NUMBER]`
 3. **Read all comments**: Check the full issue page for any additional context
-4. Assign it to yourself: `gh issue edit [ISSUE_NUMBER] --assignee @me`
-5. **Add a comment** indicating you're starting work: `gh issue comment [ISSUE_NUMBER] --body "Starting work on this ticket"`
+4. **Mark as in-progress**: `gh issue edit [ISSUE_NUMBER] --add-label "status:in-progress"`
+5. **Add a comment** indicating you're starting work: `gh issue comment [ISSUE_NUMBER] --body "🤖 Agent starting work on this ticket"`
 
 To implement a ticket:
 - Create a feature branch: `git checkout -b feature/EP-X-TY-description`
@@ -260,7 +274,7 @@ Each implementation must pass:
 
 If a ticket cannot be implemented:
 1. Add a comment explaining the issue
-2. Tag the ticket with `blocked` label
+2. Update status label: `gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:blocked"`
 3. Move to the next available ticket
 4. Return to blocked tickets later
 
