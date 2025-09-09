@@ -33,6 +33,17 @@ class Settings(BaseSettings):
     # Redis Configuration
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
     
+    # Storage Configuration
+    storage_type: str = Field(default="local", alias="STORAGE_TYPE")
+    storage_base_path: str = Field(default="storage", alias="STORAGE_BASE_PATH")
+    
+    # S3 Storage Configuration (when storage_type="s3")
+    s3_bucket_name: Optional[str] = Field(default=None, alias="S3_BUCKET_NAME")
+    s3_region_name: str = Field(default="us-east-1", alias="S3_REGION_NAME")
+    s3_access_key_id: Optional[str] = Field(default=None, alias="S3_ACCESS_KEY_ID")
+    s3_secret_access_key: Optional[str] = Field(default=None, alias="S3_SECRET_ACCESS_KEY")
+    s3_prefix: str = Field(default="", alias="S3_PREFIX")
+    
     # Logging Configuration
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
@@ -61,6 +72,15 @@ class Settings(BaseSettings):
         if v.upper() not in allowed_levels:
             raise ValueError(f"LOG_LEVEL must be one of {allowed_levels}")
         return v.upper()
+    
+    @field_validator("storage_type")
+    @classmethod
+    def validate_storage_type(cls, v):
+        """Validate storage type."""
+        allowed_types = {"local", "s3"}
+        if v not in allowed_types:
+            raise ValueError(f"STORAGE_TYPE must be one of {allowed_types}")
+        return v
 
 
 def get_settings(env_file: Optional[str] = None) -> Settings:

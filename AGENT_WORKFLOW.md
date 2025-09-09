@@ -1,5 +1,15 @@
 # Agent Workflow Framework
 
+## ⚠️ CRITICAL: READ THIS FIRST
+
+**FOR ALL AGENTS:** You MUST read this entire document before starting any work. This workflow is mandatory and includes:
+- Creating pull requests for every ticket (NEVER merge directly to main)
+- Following the exact ticket sequencing
+- Using Docker for development
+- Proper testing and quality gates
+
+**FOR HUMAN USERS:** Always tell new agents to read this document first.
+
 ## Overview
 This document outlines how Cursor agents can systematically work through the retirement planner tickets in the correct order, creating pull requests for each implementation.
 
@@ -132,7 +142,7 @@ For each ticket:
    echo "" >> CHANGELOG.md
    ```
 
-4. **Create pull request**:
+4. **Create pull request** (REQUIRED - DO NOT SKIP):
    ```bash
    git add .
    git commit -m "feat: implement EP-X-TY - brief description"
@@ -145,6 +155,8 @@ For each ticket:
 
    Closes #[issue-number]"
    ```
+   
+   **⚠️ CRITICAL: You MUST create a PR for every ticket. Do not merge directly to main.**
 
 5. **Update status and add progress comment**:
    ```bash
@@ -204,6 +216,16 @@ After PR is merged:
    gh issue list --label "phase:2" --state open
    # etc.
    ```
+
+## Ensuring Agents Read This Workflow
+
+**For Human Users:** When starting a new agent session, you MUST provide these instructions to ensure the agent follows the proper workflow:
+
+1. **Always start with**: "Please read the AGENT_WORKFLOW.md document first before starting any work"
+2. **Verify the agent has read it**: Ask the agent to summarize the key steps
+3. **Reference the workflow**: Throughout the session, remind the agent to follow the workflow steps
+
+**For Agents:** You MUST read this entire document before starting any work. This is not optional.
 
 ## Agent Instructions Template
 
