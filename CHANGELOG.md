@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-5-T1] Cursor rules for automated agent guidance (v0.10.0)
 - [EP-16-T1] Improved CI workflow to enforce quality gates (v0.11.0)
 - [EP-3-T1] Time grid & unit system (annual; real vs nominal) (v0.12.0)
+- [EP-3-T2] Mortgage amortization module (v0.13.0)
 
 ### Changed
 
@@ -62,6 +63,7 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - EP-16-T1: GitHub Actions CI workflow ✅ **COMPLETED** (automated testing on push/PR)
 - EP-2-T3: Scenario versioning & immutable base+diff 🔄 **BLOCKED** (low priority)
 - EP-3-T1: Time grid & unit system ✅ **COMPLETED**
+- EP-3-T2: Mortgage amortization module ✅ **COMPLETED**
 - Starting with EP-1-T5: All development should use Docker (`docker compose up -d`)
 - All testing, linting, and type checking should be done in the Docker environment
 
