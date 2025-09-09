@@ -75,19 +75,19 @@ jobs:
 
     - name: Run tests
       run: |
-        make test || echo "Some tests failed, but continuing..."
+        make test
 
     - name: Run linting
       run: |
-        make lint || echo "Linting issues found, but continuing..."
+        make lint
 
     - name: Run type checking
       run: |
-        make typecheck || echo "Type checking issues found, but continuing..."
+        make typecheck
 
     - name: Run coverage
       run: |
-        make coverage || echo "Coverage check failed, but continuing..."
+        make coverage
 
     - name: Upload coverage reports to Codecov
       if: matrix.python-version == '3.11'
@@ -116,13 +116,13 @@ jobs:
 
     - name: Run security checks with bandit
       run: |
-        bandit -r app/ -f json -o bandit-report.json || true
+        bandit -r app/ -f json -o bandit-report.json
         bandit -r app/ -ll
 
     - name: Run safety check
       run: |
-        safety scan --json --output safety-report.json || true
-        safety scan || echo "Safety scan completed with issues"
+        safety scan --json --output safety-report.json
+        safety scan
 
   docker:
     runs-on: ubuntu-latest
@@ -138,5 +138,5 @@ jobs:
 
     - name: Test Docker container
       run: |
-        docker run --rm -e SECRET_KEY=test-secret-key -e FLASK_ENV=testing -e DB_URL=sqlite:///test.db retirement-planner:test make test || echo "Docker test failed, but continuing..."
+        docker run --rm -e SECRET_KEY=test-secret-key -e FLASK_ENV=testing -e DB_URL=sqlite:///test.db retirement-planner:test make test
 # Trigger new CI run

@@ -43,6 +43,9 @@ This document outlines how Cursor agents can systematically work through the ret
 - **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 2/4 tickets completed
   - Next: EP-2-T3 (Scenario versioning) - ready for implementation
   - In Review: EP-2-T4 (Storage backend) - PR #100 pending
+- **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
+  - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
+  - Next: EP-16-T2 (Containerized deploy)
 - **Phase 3+**: ⏳ **WAITING** - Dependencies not yet met
 
 ## Ticket Sequencing Strategy
@@ -92,7 +95,7 @@ This document outlines how Cursor agents can systematically work through the ret
 
 ### Phase 6: CI/CD & DevOps (After basic functionality)
 **Order 61+**: Production infrastructure
-- EP-16-T1: GitHub Actions CI (test/lint/type/perf) - **MOVED FROM PHASE 5**
+- EP-16-T1: GitHub Actions CI (test/lint/type/perf) ✅ **COMPLETED**
 - EP-16-T2: Containerized deploy (Render/Fly/Heroku)
 - EP-16-T3: Basic security hardening
 - EP-16-T4: Error monitoring & logging

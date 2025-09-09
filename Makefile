@@ -51,10 +51,10 @@ format:
 
 # Run tests with coverage
 coverage:
-	pytest tests/ --cov=app --cov-report=term-missing --cov-report=html --cov-fail-under=80
+	pytest tests/ --cov=app --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80
 
 # Run all quality checks
-check: test lint typecheck
+check: test lint typecheck coverage
 	@echo "✅ All quality checks passed!"
 
 # Clean up temporary files
