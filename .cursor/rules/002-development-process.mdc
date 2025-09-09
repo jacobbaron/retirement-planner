@@ -1,0 +1,255 @@
+---
+description: Implementation workflow for feature development including branch creation, Docker setup, testing, and PR creation.
+globs:
+  - "app/**/*.py"
+  - "tests/**/*.py"
+  - "alembic/**/*.py"
+alwaysApply: false
+---
+
+# Development Process Rules
+
+This rule guides the implementation workflow for all feature development in the retirement planner project.
+
+## Context
+- Applies when working on Python files in app/, tests/, or alembic/ directories
+- Ensures consistent development practices across all implementations
+- Must be followed for every ticket implementation
+
+## Implementation Workflow
+
+### 1. Feature Branch Creation
+```bash
+# Create feature branch with descriptive name
+git checkout -b feature/EP-X-TY-short-description
+
+# Example: feature/EP-2-T3-scenario-versioning
+```
+
+### 2. Docker Environment Setup
+```bash
+# Ensure Docker environment is running
+docker compose up -d
+
+# Verify containers are healthy
+docker compose ps
+
+# Check application health
+docker compose exec app curl -f http://localhost:5000/health || echo "Health check failed"
+```
+
+### 3. Implementation Process
+
+#### A. Read and Understand Requirements
+- **Read ticket thoroughly**: `gh issue view [ISSUE_NUMBER]`
+- **Read all comments**: Check full issue page for additional context
+- **Verify dependencies**: Ensure all prerequisite tickets are completed
+- **Understand acceptance criteria**: Follow exactly as specified
+
+#### B. Implement Features
+- **Follow acceptance criteria exactly**
+- **Write tests as specified** in the ticket
+- **Use existing patterns** from the codebase
+- **Maintain code quality** standards
+
+#### C. Run Quality Gates
+```bash
+# Run tests in Docker container
+docker compose exec app make test
+
+# Run linting
+docker compose exec app make lint
+
+# Run type checking
+docker compose exec app make typecheck
+
+# Check coverage (must be ≥80%)
+docker compose exec app make coverage
+```
+
+### 4. Documentation Updates (REQUIRED - DO BEFORE PR)
+
+#### A. Update CHANGELOG.md
+```bash
+# Add entry under [Unreleased] section
+# Format: - [EP-X-TY] Brief description (vX.Y.Z)
+# Example: - [EP-2-T3] Scenario versioning & immutable base+diff (v0.8.0)
+```
+
+#### B. Update AGENT_WORKFLOW.md
+```bash
+# 1. Mark the completed ticket with ✅ **COMPLETED**
+# 2. Update "Next" indicators to point to the next available ticket
+# 3. Update current status section at the top
+# 4. Update development notes if applicable
+```
+
+#### C. Documentation Update Checklist
+- [ ] Added changelog entry with proper format
+- [ ] Marked ticket as completed in workflow document
+- [ ] Updated "Next" indicators
+- [ ] Updated current status section
+- [ ] Updated development notes if applicable
+
+### 5. Create Pull Request (REQUIRED - DO NOT SKIP)
+
+```bash
+# Stage all changes
+git add .
+
+# Commit with descriptive message
+git commit -m "feat: implement EP-X-TY - brief description
+
+- Implemented all acceptance criteria
+- Added comprehensive tests
+- Updated changelog and workflow documentation
+- All quality gates passed"
+
+# Push feature branch
+git push origin feature/EP-X-TY-short-description
+
+# Create pull request
+gh pr create --title "EP-X-TY: Ticket Title" --body "Implements EP-X-TY
+
+**Acceptance Criteria**: [Copy from ticket]
+**Tests**: [Copy from ticket]
+**Dependencies**: [Copy from ticket]
+
+**Documentation Updates**:
+- Updated CHANGELOG.md with new entry
+- Updated AGENT_WORKFLOW.md status and next indicators
+
+Closes #[issue-number]"
+```
+
+### 6. Verify GitHub Actions CI
+```bash
+# Check that CI workflow passes
+gh run list --limit 5
+gh run watch [LATEST_RUN_ID]
+
+# If CI fails, fix issues and push updates
+# Only proceed when CI shows green/checkmark
+```
+
+### 7. Update Issue Status (ONLY after CI passes)
+```bash
+# Remove in-progress label and add review label
+gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:review"
+
+# Add progress comment
+gh issue comment [ISSUE_NUMBER] --body "✅ **Implementation complete**
+
+- Created feature branch: feature/EP-X-TY-short-description
+- Implemented all acceptance criteria
+- Added tests as specified
+- Updated changelog and workflow documentation
+- Created PR: #[PR_NUMBER]
+- ✅ **GitHub Actions CI passing** - All tests, linting, and checks pass
+
+🤖 Agent waiting for human review and merge."
+```
+
+### 8. Wait for Review
+- **Do not proceed** to next ticket until PR is merged
+- **Monitor PR status** for any requested changes
+- **Address feedback** promptly if requested
+
+## Post-Merge Process
+
+After PR is merged:
+
+### 1. Update Local Repository
+```bash
+git checkout main
+git pull origin main
+```
+
+### 2. Mark Ticket as Completed
+```bash
+# Update status label
+gh issue edit [issue-number] --remove-label "status:review" --add-label "status:completed"
+
+# Close with detailed comment
+gh issue close [issue-number] --comment "✅ **COMPLETED**
+
+**Implementation Summary**:
+- All acceptance criteria met
+- Tests implemented and passing
+- Code reviewed and merged in PR #[pr-number]
+- Changelog and workflow documentation updated
+
+🤖 **Agent Status**: Ready for next ticket in sequence."
+```
+
+### 3. Find Next Ticket
+```bash
+# Check next phase or continue with current phase
+gh issue list --label "phase:1" --state open
+gh issue list --label "phase:2" --state open
+# etc.
+```
+
+## Examples
+
+### ✅ Good: Complete Implementation Workflow
+```bash
+# 1. Create feature branch
+git checkout -b feature/EP-2-T3-scenario-versioning
+
+# 2. Start Docker environment
+docker compose up -d
+
+# 3. Implement features and tests
+# ... implementation work ...
+
+# 4. Run quality gates
+docker compose exec app make test
+docker compose exec app make lint
+docker compose exec app make typecheck
+
+# 5. Update documentation
+# ... update CHANGELOG.md and AGENT_WORKFLOW.md ...
+
+# 6. Create PR
+git add .
+git commit -m "feat: implement EP-2-T3 - scenario versioning"
+git push origin feature/EP-2-T3-scenario-versioning
+gh pr create --title "EP-2-T3: Scenario versioning" --body "..."
+
+# 7. Wait for CI and review
+```
+
+### ❌ Bad: Skipping Steps
+```bash
+# Agent skips Docker setup
+# Agent doesn't run tests before committing
+# Agent forgets to update documentation
+# Agent merges directly to main
+# Agent doesn't wait for CI to pass
+```
+
+## Quality Standards
+
+### Code Quality
+- **Follow PEP 8** style guidelines
+- **Write comprehensive tests** for all new functionality
+- **Use type hints** for all function signatures
+- **Document complex logic** with clear comments
+
+### Testing Requirements
+- **Unit tests** for all new functions and methods
+- **Integration tests** for API endpoints
+- **Edge case coverage** for error conditions
+- **Minimum 80% code coverage**
+
+### Documentation Standards
+- **Clear commit messages** following conventional commits
+- **Descriptive PR titles** with ticket ID
+- **Comprehensive PR descriptions** with acceptance criteria
+- **Updated changelog entries** with proper formatting
+
+## References
+- @AGENT_WORKFLOW.md - Complete workflow documentation
+- @CHANGELOG.md - Project change log
+- @Makefile - Available development commands

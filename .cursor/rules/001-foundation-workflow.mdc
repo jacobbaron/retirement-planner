@@ -1,0 +1,131 @@
+---
+description: Enforce foundational workflow: complete tooling, use Docker, create PRs, follow phase sequencing.
+globs: []
+alwaysApply: true
+---
+
+# Foundation Workflow Rules
+
+This rule ensures agents follow these essential startup steps and core principles for the retirement planner project.
+
+## Context
+- This rule applies to ALL agent interactions with the retirement planner project
+- Must be followed before any development work begins
+- Ensures consistent behavior across all agents and sessions
+
+## Core Principles
+
+### 1. Phase-Based Development
+- **NEVER skip phases** - Complete Phase 1 (Foundation) before Phase 2, etc.
+- **Follow ticket sequencing** - Work on tickets in the exact order specified in @AGENT_WORKFLOW.md
+- **Check dependencies** - Verify all prerequisite tickets are completed before starting new work
+
+### 2. Docker-First Development
+- **Always use Docker** for development environment: `docker compose up -d`
+- **Run all commands in containers**: `docker compose exec app make [command]`
+- **Never work directly on host** - All development happens inside Docker containers
+
+### 3. Pull Request Workflow
+- **NEVER merge directly to main** - Always create pull requests
+- **Create feature branches**: `git checkout -b feature/EP-X-TY-description`
+- **Wait for human review** - Do not proceed until PR is merged
+
+### 4. Documentation Maintenance
+- **Update CHANGELOG.md** before creating any PR
+- **Update AGENT_WORKFLOW.md** status indicators
+- **Commit documentation changes** with implementation
+
+## Required Startup Sequence
+
+When starting work on this project, agents MUST:
+
+1. **Read project documentation**:
+   ```bash
+   cat README.md
+   cat AGENT_WORKFLOW.md
+   ```
+
+2. **Check repository state**:
+   ```bash
+   git status
+   git log --oneline -5
+   ```
+
+3. **Start Docker environment**:
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Find next available ticket**:
+   ```bash
+   # Check phases in order until you find open tickets
+   gh issue list --label "phase:1" --state open
+   gh issue list --label "phase:2" --state open
+   gh issue list --label "phase:3" --state open
+   # etc.
+   ```
+
+5. **Assign and start ticket**:
+   ```bash
+   gh issue edit [ISSUE_NUMBER] --add-label "status:in-progress" --add-assignee @me
+   gh issue comment [ISSUE_NUMBER] --body "🤖 Agent starting work on this ticket"
+   ```
+
+## Current Project Status
+
+Based on @AGENT_WORKFLOW.md:
+- **Phase 1 (Foundation)**: ✅ **COMPLETED** - All infrastructure tickets done
+- **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 2/4 tickets completed
+  - Next: EP-2-T3 (Scenario versioning) - ready for implementation
+  - In Review: EP-2-T4 (Storage backend) - PR #100 pending
+- **Phase 3+**: ⏳ **WAITING** - Dependencies not yet met
+
+## Quality Gates
+
+Every implementation must pass:
+- [ ] All tests pass (`docker compose exec app make test`)
+- [ ] Linting passes (`docker compose exec app make lint`)
+- [ ] Type checking passes (`docker compose exec app make typecheck`)
+- [ ] Coverage ≥80% (`docker compose exec app make coverage`)
+- [ ] Docker environment working (`docker compose up -d` and health check passes)
+- [ ] **Documentation updated** (CHANGELOG.md and AGENT_WORKFLOW.md)
+- [ ] **GitHub Actions CI passing** (all workflow jobs must show green/checkmark)
+
+## Error Handling
+
+If a ticket cannot be implemented:
+1. Add a comment explaining the issue
+2. Update status label: `gh issue edit [ISSUE_NUMBER] --remove-label "status:in-progress" --add-label "status:blocked"`
+3. Move to the next available ticket
+4. Return to blocked tickets later
+
+## Examples
+
+### ✅ Good: Proper Startup
+```bash
+# Agent reads documentation first
+cat README.md
+cat AGENT_WORKFLOW.md
+
+# Starts Docker environment
+docker compose up -d
+
+# Finds next ticket in sequence
+gh issue list --label "phase:2" --state open
+
+# Assigns ticket and starts work
+gh issue edit 123 --add-label "status:in-progress" --add-assignee @me
+```
+
+### ❌ Bad: Skipping Foundation Steps
+```bash
+# Agent jumps straight to coding without reading workflow
+# Agent works directly on host instead of Docker
+# Agent merges directly to main without PR
+# Agent skips documentation updates
+```
+
+## References
+- @AGENT_WORKFLOW.md - Complete workflow documentation
+- @CHANGELOG.md - Project change log
+- @README.md - Project overview and setup

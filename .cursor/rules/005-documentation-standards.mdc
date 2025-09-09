@@ -1,0 +1,364 @@
+---
+description: Documentation maintenance standards including CHANGELOG.md format, AGENT_WORKFLOW.md updates, commit messages, and PR descriptions.
+globs:
+  - "CHANGELOG.md"
+  - "AGENT_WORKFLOW.md"
+  - "README.md"
+alwaysApply: false
+---
+
+# Documentation Standards Rules
+
+This rule enforces documentation maintenance standards to ensure project documentation remains accurate and helpful throughout development.
+
+## Context
+- Applies when working with documentation files (CHANGELOG.md, AGENT_WORKFLOW.md, README.md)
+- Ensures consistent documentation format and updates
+- Maintains project history and workflow accuracy
+
+## Documentation Update Requirements
+
+### 1. CHANGELOG.md Updates
+
+#### Format and Structure
+Follow the [Keep a Changelog](https://keepachangelog.com/) format:
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- [EP-X-TY] Brief description of new feature (vX.Y.Z)
+
+### Changed
+- [EP-X-TY] Brief description of changes (vX.Y.Z)
+
+### Deprecated
+- [EP-X-TY] Brief description of deprecated features (vX.Y.Z)
+
+### Removed
+- [EP-X-TY] Brief description of removed features (vX.Y.Z)
+
+### Fixed
+- [EP-X-TY] Brief description of bug fixes (vX.Y.Z)
+
+### Security
+- [EP-X-TY] Brief description of security improvements (vX.Y.Z)
+```
+
+#### Entry Format
+```markdown
+- [EP-X-TY] Brief description of what was implemented (vX.Y.Z)
+```
+
+#### Examples
+```markdown
+### Added
+- [EP-2-T1] JSON schema v0.1 for Scenario data structure (v0.6.0)
+- [EP-2-T2] SQLAlchemy models - User, Scenario, Run, LedgerRow (v0.7.0)
+- [EP-2-T3] Scenario versioning & immutable base+diff (v0.8.0)
+
+### Changed
+- [EP-1-T5] Updated Docker configuration for development environment (v0.5.0)
+
+### Fixed
+- [EP-2-T4] Fixed storage backend connection issues (v0.8.1)
+```
+
+#### Update Process
+1. **Add entry under `[Unreleased]` section**
+2. **Use ticket ID format**: `[EP-X-TY] Brief description`
+3. **Categorize changes appropriately** (Added, Changed, Fixed, etc.)
+4. **Include version number** in parentheses
+5. **Increment version number** appropriately
+
+### 2. AGENT_WORKFLOW.md Updates
+
+#### Status Tracking
+Update the current status section at the top:
+
+```markdown
+## Current Status (Updated: [Date])
+- **Phase 1 (Foundation)**: ✅ **COMPLETED** - All infrastructure tickets done
+- **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 3/4 tickets completed
+  - Next: EP-2-T4 (Storage backend) - ready for implementation
+  - In Review: EP-2-T3 (Scenario versioning) - PR #101 pending
+- **Phase 3+**: ⏳ **WAITING** - Dependencies not yet met
+```
+
+#### Ticket Status Updates
+Mark completed tickets with ✅ **COMPLETED**:
+
+```markdown
+### Phase 2: Core Data & Engine (Parallel after foundation) 🔄 **IN PROGRESS**
+**Order 6-12**: Data models and basic engine components
+- EP-2-T1: Define JSON schema v0.1 for Scenario ✅ **COMPLETED**
+- EP-2-T2: SQLAlchemy models (User, Scenario, Run, LedgerRow) ✅ **COMPLETED**
+- EP-2-T3: Scenario versioning & immutable base+diff ✅ **COMPLETED**
+- EP-2-T4: Storage backend 🔄 **NEXT**
+```
+
+#### Next Indicators
+Update "Next" indicators to point to the next available ticket:
+
+```markdown
+- **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 3/4 tickets completed
+  - Next: EP-2-T4 (Storage backend) - ready for implementation
+```
+
+### 3. Commit Message Standards
+
+#### Conventional Commits Format
+```bash
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+#### Types
+- **feat**: New feature implementation
+- **fix**: Bug fix
+- **docs**: Documentation changes
+- **style**: Code style changes (formatting, etc.)
+- **refactor**: Code refactoring
+- **test**: Adding or updating tests
+- **chore**: Maintenance tasks
+
+#### Examples
+```bash
+# Feature implementation
+git commit -m "feat: implement EP-2-T3 - scenario versioning
+
+- Added ScenarioVersion model with base+diff pattern
+- Implemented immutable scenario storage
+- Added comprehensive tests for versioning logic
+- Updated changelog and workflow documentation"
+
+# Bug fix
+git commit -m "fix: resolve storage backend connection timeout
+
+- Fixed connection pool configuration
+- Added retry logic for failed connections
+- Updated error handling for storage operations"
+
+# Documentation update
+git commit -m "docs: update changelog and workflow status for EP-2-T3
+
+- Added changelog entry for scenario versioning
+- Updated AGENT_WORKFLOW.md status indicators
+- Marked EP-2-T3 as completed"
+```
+
+### 4. PR Description Templates
+
+#### Standard PR Description
+```markdown
+Implements EP-X-TY: [Ticket Title]
+
+**Acceptance Criteria**: 
+- [Copy acceptance criteria from ticket]
+
+**Tests**: 
+- [Copy test requirements from ticket]
+
+**Dependencies**: 
+- [Copy dependencies from ticket]
+
+**Implementation Details**:
+- [Brief description of what was implemented]
+- [Key files modified]
+- [Important design decisions]
+
+**Documentation Updates**:
+- Updated CHANGELOG.md with new entry
+- Updated AGENT_WORKFLOW.md status and next indicators
+
+**Quality Gates**:
+- [ ] All tests pass
+- [ ] Linting passes
+- [ ] Type checking passes
+- [ ] Coverage ≥80%
+- [ ] GitHub Actions CI passing
+
+Closes #[issue-number]
+```
+
+#### Example PR Description
+```markdown
+Implements EP-2-T3: Scenario versioning & immutable base+diff
+
+**Acceptance Criteria**: 
+- Implement immutable scenario storage using base+diff pattern
+- Add ScenarioVersion model with version tracking
+- Support scenario branching and merging
+- Maintain backward compatibility with existing scenarios
+
+**Tests**: 
+- Unit tests for ScenarioVersion model
+- Integration tests for versioning operations
+- Edge case tests for branching and merging
+- Performance tests for large scenario datasets
+
+**Dependencies**: 
+- EP-2-T1: JSON schema (completed)
+- EP-2-T2: SQLAlchemy models (completed)
+
+**Implementation Details**:
+- Added ScenarioVersion model with base_scenario_id and diff_data fields
+- Implemented versioning service for creating and managing versions
+- Added migration for new versioning tables
+- Updated scenario API to support version operations
+
+**Documentation Updates**:
+- Updated CHANGELOG.md with new entry
+- Updated AGENT_WORKFLOW.md status and next indicators
+
+**Quality Gates**:
+- [x] All tests pass
+- [x] Linting passes
+- [x] Type checking passes
+- [x] Coverage ≥80%
+- [x] GitHub Actions CI passing
+
+Closes #123
+```
+
+## Documentation Update Checklist
+
+Before creating any pull request, verify:
+
+- [ ] **CHANGELOG.md updated** with proper entry format
+- [ ] **AGENT_WORKFLOW.md status updated** (current status, ticket completion, next indicators)
+- [ ] **Commit message follows** conventional commits format
+- [ ] **PR description includes** all required sections
+- [ ] **Version numbers incremented** appropriately
+- [ ] **Documentation accuracy verified** (no outdated information)
+
+## Documentation Maintenance Process
+
+### 1. Before Implementation
+```bash
+# Read current documentation state
+cat CHANGELOG.md
+cat AGENT_WORKFLOW.md
+
+# Note current version and status
+# Plan documentation updates needed
+```
+
+### 2. During Implementation
+```bash
+# Keep notes of changes made
+# Track files modified
+# Note any breaking changes
+```
+
+### 3. Before PR Creation
+```bash
+# Update CHANGELOG.md
+# Update AGENT_WORKFLOW.md
+# Verify documentation accuracy
+# Commit documentation changes
+```
+
+### 4. After PR Merge
+```bash
+# Update local documentation
+# Verify all changes are reflected
+# Prepare for next ticket
+```
+
+## Examples
+
+### ✅ Good: Complete Documentation Updates
+```bash
+# 1. Update CHANGELOG.md
+echo "- [EP-2-T3] Scenario versioning & immutable base+diff (v0.8.0)" >> CHANGELOG.md
+
+# 2. Update AGENT_WORKFLOW.md
+# Mark EP-2-T3 as completed
+# Update next indicators
+# Update current status
+
+# 3. Commit with proper message
+git add CHANGELOG.md AGENT_WORKFLOW.md
+git commit -m "docs: update changelog and workflow status for EP-2-T3
+
+- Added changelog entry for scenario versioning
+- Updated AGENT_WORKFLOW.md status indicators
+- Marked EP-2-T3 as completed"
+
+# 4. Create PR with comprehensive description
+gh pr create --title "EP-2-T3: Scenario versioning" --body "..."
+```
+
+### ❌ Bad: Incomplete Documentation Updates
+```bash
+# Agent forgets to update CHANGELOG.md
+# Agent doesn't update AGENT_WORKFLOW.md status
+# Agent uses generic commit messages
+# Agent creates PR without proper description
+# Agent doesn't verify documentation accuracy
+```
+
+## Version Management
+
+### Semantic Versioning
+Follow [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH):
+
+- **MAJOR**: Breaking changes
+- **MINOR**: New features (backward compatible)
+- **PATCH**: Bug fixes (backward compatible)
+
+### Version Increment Rules
+- **New feature implementation**: Increment MINOR version
+- **Bug fix**: Increment PATCH version
+- **Breaking change**: Increment MAJOR version
+- **Documentation only**: No version increment needed
+
+### Version Examples
+```markdown
+## [Unreleased]
+
+### Added
+- [EP-2-T3] Scenario versioning & immutable base+diff (v0.8.0)
+- [EP-2-T4] Storage backend implementation (v0.9.0)
+
+### Fixed
+- [EP-2-T4] Fixed storage connection timeout (v0.9.1)
+```
+
+## Documentation Quality Standards
+
+### Accuracy
+- **Keep information current** and accurate
+- **Update status indicators** immediately after changes
+- **Verify all links** and references work
+- **Remove outdated information** promptly
+
+### Clarity
+- **Use clear, concise language**
+- **Provide specific examples** where helpful
+- **Maintain consistent formatting**
+- **Use proper markdown syntax**
+
+### Completeness
+- **Include all required sections**
+- **Provide sufficient detail** for understanding
+- **Cover all acceptance criteria**
+- **Document any breaking changes**
+
+## References
+- [Keep a Changelog](https://keepachangelog.com/) - Changelog format standard
+- [Semantic Versioning](https://semver.org/) - Version numbering standard
+- [Conventional Commits](https://www.conventionalcommits.org/) - Commit message standard
+- @AGENT_WORKFLOW.md - Complete workflow documentation
+- @CHANGELOG.md - Project change log

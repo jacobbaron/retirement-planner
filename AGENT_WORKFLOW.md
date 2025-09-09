@@ -10,6 +10,31 @@
 
 **FOR HUMAN USERS:** Always tell new agents to read this document first.
 
+## 🎯 Cursor Rules Integration
+
+**NEW:** This project now includes Cursor rules (`.cursor/rules/`) that automatically guide AI agents. These rules are automatically applied based on context and provide structured guidance for all development work.
+
+### Available Cursor Rules
+- **001-foundation-workflow.mdc**: Core workflow requirements (always applied)
+- **002-development-process.mdc**: Implementation workflow (auto-attached to Python files)
+- **003-ticket-management.mdc**: GitHub issue workflow (agent requested)
+- **004-quality-gates.mdc**: Testing and validation (auto-attached to test files)
+- **005-documentation-standards.mdc**: Documentation maintenance (manual invocation)
+
+### How Cursor Rules Work
+- **Always Rules**: Foundation workflow is automatically included in every agent session
+- **Auto Attached**: Development and quality rules are applied when working on relevant files
+- **Agent Requested**: Ticket management rules are available for on-demand inclusion
+- **Manual**: Documentation rules are applied when explicitly invoked with `@ruleName`
+
+### Benefits
+- **Consistent behavior** across all agent interactions
+- **Reduced manual instruction** repetition
+- **Automatic context awareness** based on files being worked on
+- **Structured guidance** for complex workflows
+
+**Note**: While Cursor rules provide automatic guidance, this document remains the authoritative source for complete workflow understanding and reference.
+
 ## Overview
 This document outlines how Cursor agents can systematically work through the retirement planner tickets in the correct order, creating pull requests for each implementation.
 
@@ -298,7 +323,16 @@ ls -la CHANGELOG.md
 # Check if Docker is available (required for development)
 docker --version
 docker compose --version
+
+# Check Cursor rules are available
+ls -la .cursor/rules/
 ```
+
+**CURSOR RULES:** This project includes Cursor rules that automatically guide your work:
+- Foundation workflow rules are always applied
+- Development process rules activate when working on Python files
+- Quality gates rules activate when working on test files
+- Use `@ruleName` to invoke specific rules manually
 
 To find the next ticket, run these commands in order:
 ```bash
@@ -451,3 +485,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 4. When creating releases, move `[Unreleased]` to a version number
 
 This framework ensures systematic, dependency-aware development with proper quality gates, documentation, and human oversight.
+
+## Cursor Rules Troubleshooting
+
+### Rule Activation Issues
+If Cursor rules are not being applied automatically:
+
+1. **Check rule file format**:
+   ```bash
+   # Verify .mdc files are properly formatted
+   cat .cursor/rules/001-foundation-workflow.mdc
+   ```
+
+2. **Verify file paths**:
+   ```bash
+   # Ensure rules directory exists
+   ls -la .cursor/rules/
+   ```
+
+3. **Check glob patterns**:
+   - Rules with `globs` patterns only activate when working on matching files
+   - Rules with `alwaysApply: true` should always be active
+   - Manual rules require explicit invocation with `@ruleName`
+
+### Rule Conflicts
+If rules provide conflicting guidance:
+
+1. **Priority order**: Foundation workflow > Development process > Quality gates > Documentation
+2. **Always rules** take precedence over auto-attached rules
+3. **Manual rules** can override automatic rules when explicitly invoked
+
+### Missing Rules
+If you need guidance not covered by existing rules:
+
+1. **Check this document** for complete workflow details
+2. **Use manual rule invocation** for specific guidance
+3. **Request new rules** by creating an issue with the enhancement label
+
+### Rule Updates
+When updating rules:
+
+1. **Test rule changes** with different file types
+2. **Verify rule activation** works as expected
+3. **Update documentation** to reflect changes
+4. **Commit rule changes** with proper documentation updates
