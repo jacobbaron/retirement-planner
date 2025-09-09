@@ -137,4 +137,4 @@ jobs:
 
     - name: Test Docker container
       run: |
-        docker run --rm retirement-planner:test make test || echo "Docker test failed, but continuing..."
+        docker run --rm -e SECRET_KEY=test-secret-key -e FLASK_ENV=testing -e DATABASE_URL=sqlite:///test.db retirement-planner:test make test || echo "Docker test failed, but continuing..."
