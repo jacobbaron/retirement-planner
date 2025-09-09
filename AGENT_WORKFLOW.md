@@ -54,11 +54,18 @@ This document outlines how Cursor agents can systematically work through the ret
 When a fresh agent starts, it should:
 
 ```bash
-# 1. Check current repository state
+# 1. Read the project documentation for context
+cat README.md
+cat AGENT_WORKFLOW.md
+
+# 2. Check current repository state
 git status
 git log --oneline -5
 
-# 2. Find the next ticket to work on
+# 3. Check if changelog exists, create if needed
+ls -la CHANGELOG.md || echo "Changelog not found - will create one"
+
+# 4. Find the next ticket to work on
 # First, check Phase 1 tickets (foundation)
 gh issue list --label "phase:1" --state open
 
@@ -107,8 +114,19 @@ For each ticket:
    - Ensure all tests pass
    - Run linting and type checking
 
-3. **Create pull request**:
+3. **Update changelog**:
    ```bash
+   # Add entry to CHANGELOG.md
+   echo "## [Unreleased]" >> CHANGELOG.md
+   echo "### Added" >> CHANGELOG.md
+   echo "- [EP-X-TY] Brief description of what was implemented" >> CHANGELOG.md
+   echo "" >> CHANGELOG.md
+   ```
+
+4. **Create pull request**:
+   ```bash
+   git add .
+   git commit -m "feat: implement EP-X-TY - brief description"
    git push origin feature/EP-X-TY-short-description
    gh pr create --title "EP-X-TY: Ticket Title" --body "Implements EP-X-TY
 
@@ -119,7 +137,20 @@ For each ticket:
    Closes #[issue-number]"
    ```
 
-4. **Wait for review**: Agent should not proceed until PR is merged
+5. **Add progress comment to issue**:
+   ```bash
+   gh issue comment [ISSUE_NUMBER] --body "✅ Implementation complete
+   
+   - Created feature branch: feature/EP-X-TY-short-description
+   - Implemented all acceptance criteria
+   - Added tests as specified
+   - Updated changelog
+   - Created PR: #[PR_NUMBER]
+   
+   Waiting for review and merge."
+   ```
+
+6. **Wait for review**: Agent should not proceed until PR is merged
 
 ### 4. Post-Merge Process
 After PR is merged:
@@ -130,14 +161,31 @@ After PR is merged:
    git pull origin main
    ```
 
-2. **Close the ticket**:
+2. **Update changelog with version**:
    ```bash
-   gh issue close [issue-number] --comment "Implemented in PR #[pr-number]"
+   # Update the changelog to move from [Unreleased] to a version
+   # This should be done when creating a release, but for now just note completion
    ```
 
-3. **Find next ticket**:
+3. **Close the ticket with detailed comment**:
    ```bash
-   gh issue list --state open --json number,title,labels | jq '.[0]'
+   gh issue close [issue-number] --comment "✅ **COMPLETED**
+
+   **Implementation Summary**:
+   - All acceptance criteria met
+   - Tests implemented and passing
+   - Code reviewed and merged in PR #[pr-number]
+   - Changelog updated
+   
+   **Next Steps**: Ready for next ticket in sequence."
+   ```
+
+4. **Find next ticket**:
+   ```bash
+   # Check next phase or continue with current phase
+   gh issue list --label "phase:1" --state open
+   gh issue list --label "phase:2" --state open
+   # etc.
    ```
 
 ## Agent Instructions Template
@@ -155,6 +203,18 @@ You are working on the retirement planner project. Your task is to:
 
 Current repository: https://github.com/jacobbaron/retirement-planner
 
+**IMPORTANT: Start by reading the project documentation:**
+```bash
+# Read the README to understand the project
+cat README.md
+
+# Read this workflow document
+cat AGENT_WORKFLOW.md
+
+# Check if changelog exists
+ls -la CHANGELOG.md
+```
+
 To find the next ticket, run these commands in order:
 ```bash
 # Check Phase 1 (foundation) first
@@ -171,8 +231,10 @@ gh issue list --label "phase:5" --state open
 
 Once you find a phase with open tickets:
 1. Pick the first ticket in the list (they should be in order)
-2. Assign it to yourself: `gh issue edit [ISSUE_NUMBER] --assignee @me`
-3. View the ticket details: `gh issue view [ISSUE_NUMBER]`
+2. **Read the ticket thoroughly**: `gh issue view [ISSUE_NUMBER]`
+3. **Read all comments**: Check the full issue page for any additional context
+4. Assign it to yourself: `gh issue edit [ISSUE_NUMBER] --assignee @me`
+5. **Add a comment** indicating you're starting work: `gh issue comment [ISSUE_NUMBER] --body "Starting work on this ticket"`
 
 To implement a ticket:
 - Create a feature branch: `git checkout -b feature/EP-X-TY-description`
@@ -212,4 +274,39 @@ The agent should maintain a simple log:
 [Date] EP-1-T4: ⏳ Waiting for dependencies
 ```
 
-This framework ensures systematic, dependency-aware development with proper quality gates and human oversight.
+## Changelog Management
+
+The agent should maintain a `CHANGELOG.md` file following the [Keep a Changelog](https://keepachangelog.com/) format:
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- [EP-1-T1] Flask application scaffold with health endpoint
+- [EP-1-T2] Development tooling (pytest, coverage, black, isort, flake8, mypy)
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+```
+
+**Changelog Update Process:**
+1. Add new entries under `[Unreleased]` section
+2. Use ticket ID format: `[EP-X-TY] Brief description`
+3. Categorize changes appropriately (Added, Changed, Fixed, etc.)
+4. When creating releases, move `[Unreleased]` to a version number
+
+This framework ensures systematic, dependency-aware development with proper quality gates, documentation, and human oversight.
