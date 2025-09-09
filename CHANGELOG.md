@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-16-T1] GitHub Actions CI workflow for automated testing (v0.9.0)
 - [EP-5-T1] Cursor rules for automated agent guidance (v0.10.0)
 - [EP-16-T1] Improved CI workflow to enforce quality gates (v0.11.0)
+- [EP-3-T1] Time grid & unit system (annual; real vs nominal) (v0.12.0)
 
 ### Changed
 
@@ -59,7 +60,8 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - EP-2-T2: SQLAlchemy models - User, Scenario, Run, LedgerRow ✅ **COMPLETED** (PR #101)
 - EP-2-T4: S3/local storage for exports & run artifacts 🔄 **IN REVIEW** (PR #100)
 - EP-16-T1: GitHub Actions CI workflow ✅ **COMPLETED** (automated testing on push/PR)
-- EP-2-T3: Scenario versioning & immutable base+diff 🔄 **NEXT**
+- EP-2-T3: Scenario versioning & immutable base+diff 🔄 **BLOCKED** (low priority)
+- EP-3-T1: Time grid & unit system ✅ **COMPLETED**
 - Starting with EP-1-T5: All development should use Docker (`docker compose up -d`)
 - All testing, linting, and type checking should be done in the Docker environment
 

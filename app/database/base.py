@@ -7,7 +7,7 @@ for the retirement planner application.
 
 from typing import Generator, Optional
 
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from app.config import get_settings
