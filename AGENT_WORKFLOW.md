@@ -7,11 +7,11 @@ This document outlines how Cursor agents can systematically work through the ret
 
 ### Phase 1: Foundation (Must be completed first)
 **Order 1-5**: Core infrastructure that everything else depends on
-- EP-1-T1: Create repo scaffold (Flask app factory, blueprints, config)
-- EP-1-T2: Add tooling (pytest, coverage, black, isort, flake8/ruff, mypy)
-- EP-1-T3: Config management via `.env` and Pydantic Settings
+- EP-1-T1: Create repo scaffold (Flask app factory, blueprints, config) ✅ **COMPLETED**
+- EP-1-T5: Dockerfile & dev docker-compose ✅ **COMPLETED**
+- EP-1-T2: Add tooling (pytest, coverage, black, isort, flake8/ruff, mypy) 🔄 **NEXT**
 - EP-1-T4: Makefile & pre-commit hooks
-- EP-1-T5: Dockerfile & dev docker-compose
+- EP-1-T3: Config management via `.env` and Pydantic Settings
 
 ### Phase 2: Core Data & Engine (Parallel after foundation)
 **Order 6-12**: Data models and basic engine components
@@ -47,6 +47,13 @@ This document outlines how Cursor agents can systematically work through the ret
 ### Phase 5: Domain Modules (Can be parallel)
 **Order 28-60**: Specialized features
 - Tax engine, withdrawal strategies, housing, college, benefits, etc.
+
+### Phase 6: CI/CD & DevOps (After basic functionality)
+**Order 61+**: Production infrastructure
+- EP-16-T1: GitHub Actions CI (test/lint/type/perf) - **MOVED FROM PHASE 5**
+- EP-16-T2: Containerized deploy (Render/Fly/Heroku)
+- EP-16-T3: Basic security hardening
+- EP-16-T4: Error monitoring & logging
 
 ## Agent Workflow Process
 
