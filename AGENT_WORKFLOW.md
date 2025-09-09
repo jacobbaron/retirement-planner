@@ -45,10 +45,11 @@ This document outlines how Cursor agents can systematically work through the ret
   - ✅ **COMPLETED**: EP-2-T2 (SQLAlchemy models) - PR #101
   - ✅ **COMPLETED**: EP-2-T4 (Storage backend) - PR #100
   - 🔄 **BLOCKED**: EP-2-T3 (Scenario versioning) - low priority
-- **Phase 3 (Simulation Engines)**: 🔄 **IN PROGRESS** - 2/5 tickets completed
+- **Phase 3 (Simulation Engines)**: 🔄 **IN PROGRESS** - 3/5 tickets completed
   - ✅ **COMPLETED**: EP-3-T1 (Time grid & unit system) - ready for PR
   - ✅ **COMPLETED**: EP-3-T2 (Mortgage amortization module) - ready for PR
-  - Next: EP-3-T3 (Baseline expenses & lumpy events)
+  - ✅ **COMPLETED**: EP-3-T3 (Baseline expenses & lumpy events) - ready for PR
+  - Next: EP-3-T4 (Account balance evolution)
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)
@@ -74,7 +75,7 @@ This document outlines how Cursor agents can systematically work through the ret
 **Order 13-19**: Core simulation logic
 - EP-3-T1: Time grid & unit system (annual; real vs nominal) ✅ **COMPLETED**
 - EP-3-T2: Mortgage amortization module ✅ **COMPLETED**
-- EP-3-T3: Baseline expenses & lumpy events
+- EP-3-T3: Baseline expenses & lumpy events ✅ **COMPLETED**
 - EP-3-T4: Account balance evolution (taxable/trad/Roth)
 - EP-3-T5: Social Security stub (fixed input benefit)
 - EP-4-T1: Random returns generator (normal/lognormal selectable)
