@@ -6,7 +6,6 @@ payment calculations, amortization schedules, extra payments, and refinancing sc
 """
 
 import pytest
-from decimal import Decimal
 
 from app.models.mortgage_amortization import (
     AmortizationSchedule,

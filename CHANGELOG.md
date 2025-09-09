@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-3-T4] Account balance evolution module (v0.15.0)
 - [EP-3-T5] Social Security stub (fixed input benefit) (v0.16.0)
 - [EP-3-T6] Income Engine (salary growth, bonuses, other income) (v0.17.0)
+- [EP-4-T1] Random returns generator (normal/lognormal selectable) (v0.18.0)
 
 ### Changed
 
@@ -74,5 +75,8 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 
 **Updated Sequencing Strategy:**
 - **Phase 1**: Foundation (EP-1-T1, EP-1-T5, EP-1-T2, EP-1-T4, EP-1-T3)
-- **Phase 2-4**: Core functionality and features
-- **Phase 6**: CI/CD & DevOps (moved from Phase 5 to after basic functionality)
+- **Phase 2-3**: Core data models and deterministic engines ✅ **COMPLETED**
+- **Phase 4**: Monte Carlo Engine (MVP PRIORITY) - **IN PROGRESS**
+- **Phase 5**: API and UI interfaces
+- **Phase 6**: Domain modules and specialized features
+- **Phase 7**: CI/CD & DevOps (moved from Phase 5 to after basic functionality)

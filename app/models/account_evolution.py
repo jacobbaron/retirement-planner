@@ -10,17 +10,17 @@ from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from .time_grid import TimeGrid, InflationAdjuster
 from .scenario import (
     AssetAllocation,
+    College529Account,
+    HSAAccount,
+    Roth401kAccount,
+    RothIRAAccount,
     TaxableAccount,
     Traditional401kAccount,
-    Roth401kAccount,
     TraditionalIRAAccount,
-    RothIRAAccount,
-    HSAAccount,
-    College529Account,
 )
+from .time_grid import InflationAdjuster, TimeGrid
 
 
 class Transaction(BaseModel):

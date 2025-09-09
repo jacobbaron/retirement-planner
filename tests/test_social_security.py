@@ -7,28 +7,26 @@ and integration with income projections.
 """
 
 import pytest
-from decimal import Decimal
 
+from app.models.scenario import (
+    ExpectedReturns,
+    Household,
+    Incomes,
+    MarketModel,
+    Scenario,
+    SocialSecurity,
+    SocialSecurityStrategy,
+    Strategy,
+    Volatility,
+)
 from app.models.social_security import (
     SocialSecurityBenefit,
     SocialSecurityEngine,
+    calculate_social_security_present_value,
     create_social_security_engine_from_scenario,
     validate_social_security_timing,
-    calculate_social_security_present_value,
 )
-from app.models.time_grid import TimeGrid, InflationAdjuster
-from app.models.scenario import (
-    SocialSecurity,
-    SocialSecurityStrategy,
-    Household,
-    Incomes,
-    Strategy,
-    MarketModel,
-    ExpectedReturns,
-    Volatility,
-    Correlations,
-    Scenario,
-)
+from app.models.time_grid import InflationAdjuster, TimeGrid
 
 
 class TestSocialSecurityBenefit:
@@ -159,7 +157,12 @@ class TestSocialSecurityEngine:
 
     @pytest.fixture
     def social_security_engine(
-        self, time_grid, inflation_adjuster, household, social_security_benefits, social_security_strategy
+        self,
+        time_grid,
+        inflation_adjuster,
+        household,
+        social_security_benefits,
+        social_security_strategy,
     ):
         """Create a Social Security engine for testing."""
         return SocialSecurityEngine(
@@ -185,7 +188,9 @@ class TestSocialSecurityEngine:
     def test_get_benefits_for_year_after_claim(self, social_security_engine):
         """Test getting benefits after claim year."""
         benefits = social_security_engine.get_benefits_for_year(2057)
-        assert len(benefits) == 2  # Both benefits start this year (primary at 68, spouse at 65)
+        assert (
+            len(benefits) == 2
+        )  # Both benefits start this year (primary at 68, spouse at 65)
 
         # Find primary and spouse benefits
         primary_benefit = next(b for b in benefits if b.person == "primary")
@@ -227,7 +232,7 @@ class TestSocialSecurityEngine:
         # After both claims with COLA
         benefits = social_security_engine.get_benefits_by_person(2058)
         assert benefits["primary"] > 30000.0  # Higher due to COLA
-        assert benefits["spouse"] > 15000.0   # Higher due to COLA
+        assert benefits["spouse"] > 15000.0  # Higher due to COLA
 
     def test_cola_adjustment(self, social_security_engine):
         """Test COLA adjustment over time."""
@@ -246,7 +251,7 @@ class TestSocialSecurityEngine:
         # Third year (2 years of COLA)
         benefits = social_security_engine.get_benefits_for_year(2059)
         primary_benefit = next(b for b in benefits if b.person == "primary")
-        expected_amount = 30000.0 * (1.02 ** 2)  # 2 years of 2% COLA
+        expected_amount = 30000.0 * (1.02**2)  # 2 years of 2% COLA
         assert abs(primary_benefit.annual_amount - expected_amount) < 0.01
 
     def test_benefit_summary(self, social_security_engine):
@@ -331,7 +336,9 @@ class TestSocialSecurityEngine:
 
         # Test retirement benefit
         benefits_2057 = engine.get_benefits_for_year(2057)
-        retirement_benefit = next(b for b in benefits_2057 if b.benefit_type == "retirement")
+        retirement_benefit = next(
+            b for b in benefits_2057 if b.benefit_type == "retirement"
+        )
         assert retirement_benefit.person == "primary"
         assert retirement_benefit.annual_amount == 30000.0
 
@@ -343,7 +350,9 @@ class TestSocialSecurityEngine:
 
         # Test survivor benefit
         benefits_2060 = engine.get_benefits_for_year(2060)
-        survivor_benefit = next(b for b in benefits_2060 if b.benefit_type == "survivor")
+        survivor_benefit = next(
+            b for b in benefits_2060 if b.benefit_type == "survivor"
+        )
         assert survivor_benefit.person == "spouse"
         assert survivor_benefit.annual_amount == 20000.0
 
@@ -389,9 +398,8 @@ class TestSocialSecurityEngineIntegration:
     @pytest.fixture
     def sample_scenario(self):
         """Create a sample scenario for testing."""
-        from app.models.scenario import (
-            Accounts, Liabilities, Expenses, Policies
-        )
+        from app.models.scenario import Accounts, Expenses, Liabilities, Policies
+
         household = Household(
             primary_age=35,
             spouse_age=33,

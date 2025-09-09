@@ -52,8 +52,9 @@ This document outlines how Cursor agents can systematically work through the ret
 - ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
 - ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
 - ✅ **COMPLETED**: EP-3-T6 (Income Engine) - ready for PR
-- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 0/5 tickets completed
-  - Next: EP-4-T1 (Random returns generator)
+- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 1/5 tickets completed
+  - ✅ **COMPLETED**: EP-4-T1 (Random returns generator) - **HIGH PRIORITY FOR MVP**
+  - Next: EP-4-T2 (Correlated draws via covariance) - **HIGH PRIORITY FOR MVP**
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)
@@ -89,8 +90,16 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-4-T4: Withdrawal rules (4% real, fixed %, VPW scaffold)
 - EP-4-T5: Success metrics & percentiles
 
-### Phase 4: API and UI
-**Order 20-27**: User-facing interfaces
+### Phase 4: Monte Carlo Engine (MVP PRIORITY)
+**Order 20-24**: Core simulation engine for MVP
+- EP-4-T1: Random returns generator (normal/lognormal selectable) - ✅ **COMPLETED**
+- EP-4-T2: Correlated draws via covariance (Cholesky)
+- EP-4-T3: Portfolio evolution w/ annual rebalance
+- EP-4-T4: Withdrawal rules (4% real, fixed %, VPW scaffold)
+- EP-4-T5: Success metrics & percentiles
+
+### Phase 5: API and UI
+**Order 25-32**: User-facing interfaces
 - EP-11-T1: Auth (session or token) + RBAC
 - EP-11-T2: CRUD endpoints for Scenario
 - EP-11-T3: Run orchestration endpoint
@@ -100,12 +109,12 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-12-T3: Results dashboard
 - EP-12-T4: Compare view (A/B)
 
-### Phase 5: Domain Modules (Can be parallel)
-**Order 28-60**: Specialized features
+### Phase 6: Domain Modules (Can be parallel)
+**Order 33-65**: Specialized features
 - Tax engine, withdrawal strategies, housing, college, benefits, etc.
 
-### Phase 6: CI/CD & DevOps (After basic functionality)
-**Order 61+**: Production infrastructure
+### Phase 7: CI/CD & DevOps (After basic functionality)
+**Order 66+**: Production infrastructure
 - EP-16-T1: GitHub Actions CI (test/lint/type/perf) ✅ **COMPLETED**
 - EP-16-T2: Containerized deploy (Render/Fly/Heroku)
 - EP-16-T3: Basic security hardening

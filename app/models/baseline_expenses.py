@@ -7,10 +7,10 @@ and one-time lumpy events, with inflation adjustment and cashflow integration.
 
 from typing import Any, Dict, List, Literal, Optional, Tuple
 
-from pydantic import BaseModel, Field, field_validator, ValidationInfo
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
-from .time_grid import TimeGrid, InflationAdjuster
 from .scenario import Expenses
+from .time_grid import InflationAdjuster, TimeGrid
 
 
 class ExpenseCategory(BaseModel):

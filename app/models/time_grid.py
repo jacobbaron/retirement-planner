@@ -8,7 +8,7 @@ and real vs nominal value calculations for the retirement planning engine.
 from datetime import datetime
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator, ValidationInfo
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class TimeGrid(BaseModel):
