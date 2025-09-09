@@ -27,8 +27,8 @@ class Settings(BaseSettings):
         alias="DB_URL",
     )
 
-    # Redis Configuration
-    redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
+    # Redis Configuration (default to Docker service name)
+    redis_url: str = Field(default="redis://redis:6379/0", alias="REDIS_URL")
 
     # Storage Configuration
     storage_type: str = Field(default="local", alias="STORAGE_TYPE")
