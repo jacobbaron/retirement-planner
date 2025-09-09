@@ -12,8 +12,10 @@ from app.models.random_returns import (
     calculate_annualized_returns,
     calculate_cumulative_returns,
     calculate_portfolio_returns,
+    create_default_correlation_matrix,
     create_default_portfolio,
     create_three_asset_portfolio,
+    validate_correlation_accuracy,
     validate_returns_statistics,
 )
 
@@ -118,6 +120,96 @@ class TestRandomReturnsConfig:
 
         with pytest.raises(ValueError):
             RandomReturnsConfig(asset_classes=assets, years=30, num_paths=0)  # Invalid
+
+    def test_valid_correlation_matrix(self):
+        """Test creating config with valid correlation matrix."""
+        assets = create_default_portfolio()
+        corr_matrix = create_default_correlation_matrix(2)
+
+        config = RandomReturnsConfig(
+            asset_classes=assets,
+            years=30,
+            num_paths=1000,
+            correlation_matrix=corr_matrix,
+        )
+        assert config.correlation_matrix is not None
+        np.testing.assert_array_equal(config.correlation_matrix, corr_matrix)
+
+    def test_invalid_correlation_matrix_size(self):
+        """Test validation of correlation matrix size."""
+        assets = create_default_portfolio()  # 2 assets
+        # Wrong size correlation matrix (3x3 instead of 2x2)
+        invalid_corr = np.array([[1.0, 0.5, 0.3], [0.5, 1.0, 0.2], [0.3, 0.2, 1.0]])
+
+        with pytest.raises(ValueError, match="Correlation matrix must be 2x2"):
+            RandomReturnsConfig(
+                asset_classes=assets,
+                years=30,
+                num_paths=1000,
+                correlation_matrix=invalid_corr,
+            )
+
+    def test_invalid_correlation_matrix_symmetric(self):
+        """Test validation of correlation matrix symmetry."""
+        assets = create_default_portfolio()
+        # Non-symmetric matrix
+        invalid_corr = np.array([[1.0, 0.5], [0.3, 1.0]])  # 0.5 != 0.3
+
+        with pytest.raises(ValueError, match="Correlation matrix must be symmetric"):
+            RandomReturnsConfig(
+                asset_classes=assets,
+                years=30,
+                num_paths=1000,
+                correlation_matrix=invalid_corr,
+            )
+
+    def test_invalid_correlation_matrix_diagonal(self):
+        """Test validation of correlation matrix diagonal elements."""
+        assets = create_default_portfolio()
+        # Diagonal not equal to 1.0
+        invalid_corr = np.array([[1.0, 0.5], [0.5, 0.9]])  # 0.9 != 1.0
+
+        with pytest.raises(
+            ValueError, match="Correlation matrix diagonal elements must be 1.0"
+        ):
+            RandomReturnsConfig(
+                asset_classes=assets,
+                years=30,
+                num_paths=1000,
+                correlation_matrix=invalid_corr,
+            )
+
+    def test_invalid_correlation_matrix_positive_definite(self):
+        """Test validation of correlation matrix positive definiteness."""
+        assets = create_default_portfolio()
+        # Not positive definite (e.g., correlation > 1)
+        invalid_corr = np.array([[1.0, 1.1], [1.1, 1.0]])  # Correlation > 1
+
+        with pytest.raises(
+            ValueError, match="Correlation matrix must be positive definite"
+        ):
+            RandomReturnsConfig(
+                asset_classes=assets,
+                years=30,
+                num_paths=1000,
+                correlation_matrix=invalid_corr,
+            )
+
+    def test_invalid_correlation_matrix_bounds(self):
+        """Test validation of correlation matrix bounds."""
+        assets = create_default_portfolio()
+        # Correlation outside [-1, 1]
+        invalid_corr = np.array([[1.0, 1.5], [1.5, 1.0]])  # Correlation > 1
+
+        with pytest.raises(
+            ValueError, match="Correlation matrix must be positive definite"
+        ):
+            RandomReturnsConfig(
+                asset_classes=assets,
+                years=30,
+                num_paths=1000,
+                correlation_matrix=invalid_corr,
+            )
 
 
 class TestRandomReturnsGenerator:
@@ -265,6 +357,171 @@ class TestRandomReturnsGenerator:
         expected_values = np.array([0.18, 0.06, 0.15])
         np.testing.assert_array_equal(volatilities, expected_values)
 
+    def test_generate_correlated_normal_returns(self):
+        """Test generating correlated normal returns."""
+        assets = create_default_portfolio()
+        corr_matrix = create_default_correlation_matrix(2)
+
+        config = RandomReturnsConfig(
+            asset_classes=assets,
+            years=10,
+            num_paths=10000,  # Large sample for correlation testing
+            distribution="normal",
+            correlation_matrix=corr_matrix,
+            seed=42,
+        )
+        generator = RandomReturnsGenerator(config)
+        returns = generator.generate_returns()
+
+        # Check shape
+        assert returns.shape == (2, 10, 10000)
+
+        # Check that returns are reasonable
+        assert np.all(np.isfinite(returns))
+
+        # Check statistics are close to expected values
+        is_valid, message = validate_returns_statistics(
+            returns,
+            generator.get_expected_returns(),
+            generator.get_volatilities(),
+            tolerance=0.05,
+        )
+        assert is_valid, message
+
+        # Check correlations are close to target
+        is_corr_valid, corr_message = validate_correlation_accuracy(
+            returns, corr_matrix, tolerance=0.05
+        )
+        assert is_corr_valid, corr_message
+
+    def test_generate_correlated_lognormal_returns(self):
+        """Test generating correlated lognormal returns."""
+        assets = create_default_portfolio()
+        corr_matrix = create_default_correlation_matrix(2)
+
+        config = RandomReturnsConfig(
+            asset_classes=assets,
+            years=10,
+            num_paths=10000,
+            distribution="lognormal",
+            correlation_matrix=corr_matrix,
+            seed=42,
+        )
+        generator = RandomReturnsGenerator(config)
+        returns = generator.generate_returns()
+
+        # Check shape
+        assert returns.shape == (2, 10, 10000)
+
+        # Check that returns are finite and >= -1 (can't lose more than 100%)
+        assert np.all(np.isfinite(returns))
+        assert np.all(returns >= -1.0)
+
+        # Check statistics are close to expected values
+        is_valid, message = validate_returns_statistics(
+            returns,
+            generator.get_expected_returns(),
+            generator.get_volatilities(),
+            tolerance=0.05,
+        )
+        assert is_valid, message
+
+        # Check correlations are close to target
+        is_corr_valid, corr_message = validate_correlation_accuracy(
+            returns, corr_matrix, tolerance=0.05
+        )
+        assert is_corr_valid, corr_message
+
+    def test_three_asset_correlated_returns(self):
+        """Test generating correlated returns for three assets."""
+        assets = create_three_asset_portfolio()
+        corr_matrix = create_default_correlation_matrix(3)
+
+        config = RandomReturnsConfig(
+            asset_classes=assets,
+            years=5,
+            num_paths=10000,
+            distribution="normal",
+            correlation_matrix=corr_matrix,
+            seed=123,
+        )
+        generator = RandomReturnsGenerator(config)
+        returns = generator.generate_returns()
+
+        # Check shape
+        assert returns.shape == (3, 5, 10000)
+
+        # Check that returns are reasonable
+        assert np.all(np.isfinite(returns))
+
+        # Check correlations are close to target
+        is_corr_valid, corr_message = validate_correlation_accuracy(
+            returns, corr_matrix, tolerance=0.05
+        )
+        assert is_corr_valid, corr_message
+
+    def test_correlated_returns_deterministic_seeding(self):
+        """Test that correlated returns are reproducible with same seed."""
+        assets = create_default_portfolio()
+        corr_matrix = create_default_correlation_matrix(2)
+
+        config = RandomReturnsConfig(
+            asset_classes=assets,
+            years=5,
+            num_paths=100,
+            correlation_matrix=corr_matrix,
+            seed=456,
+        )
+
+        generator1 = RandomReturnsGenerator(config)
+        returns1 = generator1.generate_returns()
+
+        generator2 = RandomReturnsGenerator(config)
+        returns2 = generator2.generate_returns()
+
+        # Results should be identical with same seed
+        np.testing.assert_array_equal(returns1, returns2)
+
+    def test_correlated_returns_different_seeds(self):
+        """Test that different seeds produce different correlated results."""
+        assets = create_default_portfolio()
+        corr_matrix = create_default_correlation_matrix(2)
+
+        config1 = RandomReturnsConfig(
+            asset_classes=assets,
+            years=5,
+            num_paths=100,
+            correlation_matrix=corr_matrix,
+            seed=123,
+        )
+
+        config2 = RandomReturnsConfig(
+            asset_classes=assets,
+            years=5,
+            num_paths=100,
+            correlation_matrix=corr_matrix,
+            seed=456,
+        )
+
+        generator1 = RandomReturnsGenerator(config1)
+        returns1 = generator1.generate_returns()
+
+        generator2 = RandomReturnsGenerator(config2)
+        returns2 = generator2.generate_returns()
+
+        # Results should be different with different seeds
+        assert not np.array_equal(returns1, returns2)
+
+        # But correlations should still be similar
+        is_corr_valid1, _ = validate_correlation_accuracy(
+            returns1, corr_matrix, tolerance=0.1
+        )
+        is_corr_valid2, _ = validate_correlation_accuracy(
+            returns2, corr_matrix, tolerance=0.1
+        )
+        assert is_corr_valid1
+        assert is_corr_valid2
+
 
 class TestPortfolioFunctions:
     """Test portfolio utility functions."""
@@ -332,6 +589,83 @@ class TestPortfolioFunctions:
         expected = np.array([0.1, 0.1])
 
         np.testing.assert_array_almost_equal(annualized, expected, decimal=3)
+
+
+class TestCorrelationFunctions:
+    """Test correlation utility functions."""
+
+    def test_create_default_correlation_matrix_two_assets(self):
+        """Test creating default correlation matrix for two assets."""
+        corr_matrix = create_default_correlation_matrix(2)
+
+        expected = np.array([[1.0, -0.2], [-0.2, 1.0]])
+        np.testing.assert_array_equal(corr_matrix, expected)
+
+    def test_create_default_correlation_matrix_three_assets(self):
+        """Test creating default correlation matrix for three assets."""
+        corr_matrix = create_default_correlation_matrix(3)
+
+        expected = np.array([[1.0, -0.2, 0.6], [-0.2, 1.0, 0.1], [0.6, 0.1, 1.0]])
+        np.testing.assert_array_equal(corr_matrix, expected)
+
+    def test_create_default_correlation_matrix_four_assets(self):
+        """Test creating default correlation matrix for four assets."""
+        corr_matrix = create_default_correlation_matrix(4)
+
+        # Should be 4x4 with 1.0 on diagonal and 0.3 off-diagonal
+        assert corr_matrix.shape == (4, 4)
+        np.testing.assert_array_equal(np.diag(corr_matrix), np.ones(4))
+
+        # Check off-diagonal elements are 0.3
+        for i in range(4):
+            for j in range(4):
+                if i != j:
+                    assert corr_matrix[i, j] == 0.3
+
+    def test_validate_correlation_accuracy_valid(self):
+        """Test correlation validation with valid correlations."""
+        # Create returns with known correlation
+        np.random.seed(42)
+        n_obs = 10000
+
+        # Generate correlated data
+        corr_target = 0.5
+        x = np.random.standard_normal(n_obs)
+        y = corr_target * x + np.sqrt(1 - corr_target**2) * np.random.standard_normal(
+            n_obs
+        )
+
+        # Reshape to match expected format (num_assets, years, num_paths)
+        returns = np.array([x, y]).reshape(2, 1, n_obs)
+        target_corr = np.array([[1.0, corr_target], [corr_target, 1.0]])
+
+        is_valid, message = validate_correlation_accuracy(
+            returns, target_corr, tolerance=0.1
+        )
+
+        assert is_valid
+        assert "within tolerance" in message
+
+    def test_validate_correlation_accuracy_invalid(self):
+        """Test correlation validation with invalid correlations."""
+        # Create returns with wrong correlation
+        np.random.seed(42)
+        n_obs = 1000
+
+        # Generate uncorrelated data
+        x = np.random.standard_normal(n_obs)
+        y = np.random.standard_normal(n_obs)
+
+        # Reshape to match expected format
+        returns = np.array([x, y]).reshape(2, 1, n_obs)
+        target_corr = np.array([[1.0, 0.8], [0.8, 1.0]])  # High target correlation
+
+        is_valid, message = validate_correlation_accuracy(
+            returns, target_corr, tolerance=0.1
+        )
+
+        assert not is_valid
+        assert "differs from target" in message
 
 
 class TestValidationFunctions:
@@ -423,6 +757,61 @@ class TestIntegration:
 
         # Check that cumulative returns are reasonable (can decrease due to negative returns)
         for path in range(1000):
+            path_cumulative = cumulative_returns[:, path]
+            # Cumulative returns should be >= -1 (can't lose more than 100%)
+            assert np.all(path_cumulative >= -1.0)
+            # Should be finite
+            assert np.all(np.isfinite(path_cumulative))
+
+    def test_end_to_end_correlated_simulation(self):
+        """Test complete end-to-end correlated simulation workflow."""
+        # Create configuration with correlation
+        assets = create_default_portfolio()
+        corr_matrix = create_default_correlation_matrix(2)
+
+        config = RandomReturnsConfig(
+            asset_classes=assets,
+            years=30,
+            num_paths=10000,
+            distribution="normal",
+            correlation_matrix=corr_matrix,
+            seed=42,
+        )
+
+        # Generate returns
+        generator = RandomReturnsGenerator(config)
+        asset_returns = generator.generate_returns()
+
+        # Calculate portfolio returns
+        weights = generator.get_asset_weights()
+        portfolio_returns = calculate_portfolio_returns(asset_returns, weights)
+
+        # Calculate cumulative returns
+        cumulative_returns = calculate_cumulative_returns(portfolio_returns)
+
+        # Calculate annualized returns
+        annualized_returns = calculate_annualized_returns(cumulative_returns, 30)
+
+        # Verify results
+        assert asset_returns.shape == (2, 30, 10000)
+        assert portfolio_returns.shape == (30, 10000)
+        assert cumulative_returns.shape == (30, 10000)
+        assert annualized_returns.shape == (10000,)
+
+        # Check that all values are finite
+        assert np.all(np.isfinite(asset_returns))
+        assert np.all(np.isfinite(portfolio_returns))
+        assert np.all(np.isfinite(cumulative_returns))
+        assert np.all(np.isfinite(annualized_returns))
+
+        # Check that correlations are close to target
+        is_corr_valid, corr_message = validate_correlation_accuracy(
+            asset_returns, corr_matrix, tolerance=0.05
+        )
+        assert is_corr_valid, corr_message
+
+        # Check that cumulative returns are reasonable
+        for path in range(10000):
             path_cumulative = cumulative_returns[:, path]
             # Cumulative returns should be >= -1 (can't lose more than 100%)
             assert np.all(path_cumulative >= -1.0)
