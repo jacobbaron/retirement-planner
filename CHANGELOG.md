@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-2-T1] Define JSON schema v0.1 for Scenario (v0.6.0)
 - [EP-2-T2] SQLAlchemy models - User, Scenario, Run, LedgerRow (v0.7.0)
 - [EP-2-T4] S3/local storage for exports & run artifacts (v0.8.0)
+- [EP-16-T1] GitHub Actions CI workflow for automated testing (v0.9.0)
 
 ### Changed
 
@@ -55,6 +56,7 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - EP-2-T1: Define JSON schema v0.1 for Scenario ✅ **COMPLETED** (PR #87)
 - EP-2-T2: SQLAlchemy models - User, Scenario, Run, LedgerRow ✅ **COMPLETED** (PR #101)
 - EP-2-T4: S3/local storage for exports & run artifacts 🔄 **IN REVIEW** (PR #100)
+- EP-16-T1: GitHub Actions CI workflow ✅ **COMPLETED** (automated testing on push/PR)
 - EP-2-T3: Scenario versioning & immutable base+diff 🔄 **NEXT**
 - Starting with EP-1-T5: All development should use Docker (`docker compose up -d`)
 - All testing, linting, and type checking should be done in the Docker environment

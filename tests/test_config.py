@@ -40,7 +40,7 @@ class TestSettings:
         """Test that missing SECRET_KEY raises ValidationError."""
         with patch.dict(os.environ, {}, clear=True):
             with pytest.raises(ValidationError) as exc_info:
-                Settings()
+                Settings(_env_file=None)
             
             # Check that the error is about SECRET_KEY
             assert "SECRET_KEY" in str(exc_info.value)

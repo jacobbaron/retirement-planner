@@ -62,11 +62,12 @@ class TestConfigSimple:
             temp_env_file = f.name
 
         try:
-            # Test loading from the temporary file
-            settings = Settings(_env_file=temp_env_file)
-            assert settings.secret_key == "test-secret-from-file"
-            assert settings.app_env == "testing"
-            assert settings.log_level == "ERROR"
+            # Test loading from the temporary file (disable default .env loading)
+            with patch.dict(os.environ, {}, clear=True):
+                settings = Settings(_env_file=temp_env_file)
+                assert settings.secret_key == "test-secret-from-file"
+                assert settings.app_env == "testing"
+                assert settings.log_level == "ERROR"
         finally:
             os.unlink(temp_env_file)
 
@@ -81,5 +82,5 @@ class TestConfigSimple:
         """Test that missing SECRET_KEY causes failure."""
         with patch.dict(os.environ, {}, clear=True):
             with pytest.raises(ValidationError) as exc_info:
-                Settings()
+                Settings(_env_file=None)
             assert "SECRET_KEY" in str(exc_info.value)
