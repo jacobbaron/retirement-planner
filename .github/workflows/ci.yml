@@ -64,7 +64,7 @@ jobs:
     - name: Set up environment variables
       run: |
         echo "DB_URL=postgresql://postgres:postgres@localhost:5432/test_retirement_planner" >> $GITHUB_ENV
-        echo "REDIS_URL=redis://localhost:6379/0" >> $GITHUB_ENV
+        echo "REDIS_URL=redis://redis:6379/0" >> $GITHUB_ENV
         echo "FLASK_ENV=testing" >> $GITHUB_ENV
         echo "SECRET_KEY=test-secret-key-for-ci" >> $GITHUB_ENV
         echo "APP_ENV=testing" >> $GITHUB_ENV
@@ -121,7 +121,7 @@ jobs:
 
     - name: Run safety check
       run: |
-        safety scan --json --output safety-report.json
+        safety scan --output json --output-file safety-report.json
         safety scan
 
   docker:
