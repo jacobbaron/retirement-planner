@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Agent workflow framework for systematic development
 - Issue tracking with phase-based sequencing (Phase 1-5)
 - Comprehensive labeling system for tickets and epics
+- [EP-1-T1] Flask application scaffold with health endpoint (v0.1.0)
 
 ### Changed
 
@@ -30,6 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This changelog will be updated by agents as they implement tickets. Each ticket implementation should add an entry under the `[Unreleased]` section with the format:
 
-- `[EP-X-TY] Brief description of what was implemented`
+- `[EP-X-TY] Brief description of what was implemented (vX.Y.Z)`
 
-When releases are created, the `[Unreleased]` section will be moved to a version number (e.g., `[1.0.0]`).
+**Version Management:**
+- Each major feature implementation should include a version number
+- Version numbers follow semantic versioning (MAJOR.MINOR.PATCH)
+- When releases are created, the `[Unreleased]` section will be moved to a version number (e.g., `[1.0.0]`)
+
+**Development Environment:**
+- For EP-1-T1 through EP-1-T4: Work locally first, then ensure Docker compatibility in EP-1-T5
+- Starting with EP-1-T5: All development should use Docker (`docker compose up -d`)
+- All testing, linting, and type checking should be done in the Docker environment
