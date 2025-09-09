@@ -6,6 +6,8 @@ python-dotenv==1.0.0
 requests==2.31.0
 pydantic==2.9.2
 pydantic-settings==2.6.1
+sqlalchemy==2.0.25
+alembic==1.13.1
 
 # Development and testing tools
 pytest==8.4.2

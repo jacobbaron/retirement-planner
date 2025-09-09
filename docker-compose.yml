@@ -7,8 +7,9 @@ services:
       - "5001:5000"
     environment:
       - FLASK_ENV=development
-      - DATABASE_URL=postgresql://retirement_user:retirement_pass@db:5432/retirement_planner
+      - DB_URL=postgresql://retirement_user:retirement_pass@db:5432/retirement_planner
       - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=development-secret-key-123
     depends_on:
       db:
         condition: service_healthy
