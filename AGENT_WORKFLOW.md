@@ -40,13 +40,17 @@ This document outlines how Cursor agents can systematically work through the ret
 
 ## Current Status (Updated: Latest)
 - **Phase 1 (Foundation)**: ✅ **COMPLETED** - All infrastructure tickets done
-- **Phase 2 (Core Data & Engine)**: 🔄 **IN PROGRESS** - 2/4 tickets completed
-  - Next: EP-2-T3 (Scenario versioning) - ready for implementation
-  - In Review: EP-2-T4 (Storage backend) - PR #100 pending
+- **Phase 2 (Core Data & Engine)**: ✅ **COMPLETED** - All tickets completed
+  - ✅ **COMPLETED**: EP-2-T1 (JSON schema v0.1) - PR #87
+  - ✅ **COMPLETED**: EP-2-T2 (SQLAlchemy models) - PR #101
+  - ✅ **COMPLETED**: EP-2-T4 (Storage backend) - PR #100
+  - 🔄 **BLOCKED**: EP-2-T3 (Scenario versioning) - low priority
+- **Phase 3 (Simulation Engines)**: 🔄 **IN PROGRESS** - 1/5 tickets completed
+  - ✅ **COMPLETED**: EP-3-T1 (Time grid & unit system) - ready for PR
+  - Next: EP-3-T2 (Mortgage amortization module)
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)
-- **Phase 3+**: ⏳ **WAITING** - Dependencies not yet met
 
 ## Ticket Sequencing Strategy
 
@@ -58,18 +62,18 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-1-T4: Makefile & pre-commit hooks ✅ **COMPLETED**
 - EP-1-T3: Config management via `.env` and Pydantic Settings ✅ **COMPLETED**
 
-### Phase 2: Core Data & Engine (Parallel after foundation) 🔄 **IN PROGRESS**
+### Phase 2: Core Data & Engine (Parallel after foundation) ✅ **COMPLETED**
 **Order 6-12**: Data models and basic engine components
 - EP-2-T1: Define JSON schema v0.1 for Scenario ✅ **COMPLETED**
 - EP-2-T2: SQLAlchemy models (User, Scenario, Run, LedgerRow) ✅ **COMPLETED**
-- EP-2-T3: Scenario versioning & immutable base+diff 🔄 **NEXT**
-- EP-2-T4: Storage backend 🔄 **IN REVIEW** (PR #100)
-- EP-3-T1: Time grid & unit system (annual; real vs nominal)
-- EP-3-T2: Mortgage amortization module
-- EP-3-T3: Baseline expenses & lumpy events
+- EP-2-T3: Scenario versioning & immutable base+diff 🔄 **BLOCKED** (low priority)
+- EP-2-T4: Storage backend ✅ **COMPLETED** (PR #100)
 
-### Phase 3: Simulation Engines
+### Phase 3: Simulation Engines 🔄 **IN PROGRESS**
 **Order 13-19**: Core simulation logic
+- EP-3-T1: Time grid & unit system (annual; real vs nominal) ✅ **COMPLETED**
+- EP-3-T2: Mortgage amortization module 🔄 **NEXT**
+- EP-3-T3: Baseline expenses & lumpy events
 - EP-3-T4: Account balance evolution (taxable/trad/Roth)
 - EP-3-T5: Social Security stub (fixed input benefit)
 - EP-4-T1: Random returns generator (normal/lognormal selectable)
