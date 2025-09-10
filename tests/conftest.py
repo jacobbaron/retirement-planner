@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database.base import Base
-from app.database.models import User
+from app.database.models import User, Run, VersionedScenario, LedgerRow
 
 
 @pytest.fixture(scope="function")

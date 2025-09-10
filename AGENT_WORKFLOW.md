@@ -52,12 +52,18 @@ This document outlines how Cursor agents can systematically work through the ret
 - ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
 - ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
 - ✅ **COMPLETED**: EP-3-T6 (Income Engine) - ready for PR
-- **Phase 4 (Monte Carlo Engine)**: ✅ **COMPLETED** - 5/5 tickets completed
+- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 4/5 tickets completed
   - ✅ **COMPLETED**: EP-4-T1 (Random returns generator) - **HIGH PRIORITY FOR MVP**
   - ✅ **COMPLETED**: EP-4-T2 (Correlated draws via covariance) - **HIGH PRIORITY FOR MVP**
   - ✅ **COMPLETED**: EP-4-T3 (Portfolio evolution w/ annual rebalance) - **HIGH PRIORITY FOR MVP**
   - ✅ **COMPLETED**: EP-4-T4 (Withdrawal rules) - **HIGH PRIORITY FOR MVP**
-  - ✅ **COMPLETED**: EP-4-T5 (Success metrics & percentiles) - **HIGH PRIORITY FOR MVP**
+  - 🔄 **IN REVIEW**: EP-4-T5 (Success metrics & percentiles) - **HIGH PRIORITY FOR MVP**
+- **Phase 4 (API & UI)**: 🔄 **IN PROGRESS** - 1/5 tickets completed
+  - ✅ **COMPLETED**: EP-11-T3 (Run orchestration endpoint) - **CRITICAL FOR MVP**
+  - **NEXT**: EP-11-T2 (CRUD endpoints for Scenario) - **CRITICAL FOR MVP**
+  - **NEXT**: EP-MVP-1 (MVP Headless Integration & Validation) - **NEW TICKET**
+  - **NEXT**: EP-11-T1 (Auth + RBAC) - Basic security
+  - **NEXT**: EP-11-T4 (Export endpoints) - Results export
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)
@@ -99,24 +105,25 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-4-T2: Correlated draws via covariance (Cholesky) - ✅ **COMPLETED**
 - EP-4-T3: Portfolio evolution w/ annual rebalance - ✅ **COMPLETED**
 - EP-4-T4: Withdrawal rules (4% real, fixed %, VPW scaffold) - ✅ **COMPLETED**
-- EP-4-T5: Success metrics & percentiles - ✅ **COMPLETED**
+- EP-4-T5: Success metrics & percentiles - 🔄 **IN REVIEW**
 
-### Phase 5: API and UI
-**Order 25-32**: User-facing interfaces
-- EP-11-T1: Auth (session or token) + RBAC
-- EP-11-T2: CRUD endpoints for Scenario
-- EP-11-T3: Run orchestration endpoint
-- EP-11-T4: Export endpoints (CSV ledger, PDF report stub)
-- EP-12-T1: Scenario builder form (Quick Start)
-- EP-12-T2: Scenario list + clone/diff
-- EP-12-T3: Results dashboard
-- EP-12-T4: Compare view (A/B)
+### Phase 4: API & UI (MVP INTEGRATION)
+**Order 25-32**: User-facing interfaces and MVP integration
+- EP-11-T3: Run orchestration endpoint - ✅ **COMPLETED** (Core API for MVP)
+- EP-11-T2: CRUD endpoints for Scenario - **NEXT** (Scenario management)
+- EP-MVP-1: MVP Headless Integration & Validation - **NEXT** (End-to-end testing)
+- EP-11-T1: Auth (session or token) + RBAC - **NEXT** (Basic security)
+- EP-11-T4: Export endpoints (CSV ledger, PDF report stub) - **NEXT** (Results export)
+- EP-12-T1: Scenario builder form (Quick Start) - **NEXT** (UI)
+- EP-12-T2: Scenario list + clone/diff - **NEXT** (UI)
+- EP-12-T3: Results dashboard - **NEXT** (UI)
+- EP-12-T4: Compare view (A/B) - **NEXT** (UI)
 
-### Phase 6: Domain Modules (Can be parallel)
+### Phase 5: Domain Modules (Can be parallel)
 **Order 33-65**: Specialized features
 - Tax engine, withdrawal strategies, housing, college, benefits, etc.
 
-### Phase 7: CI/CD & DevOps (After basic functionality)
+### Phase 6: CI/CD & DevOps (After basic functionality)
 **Order 66+**: Production infrastructure
 - EP-16-T1: GitHub Actions CI (test/lint/type/perf) ✅ **COMPLETED**
 - EP-16-T2: Containerized deploy (Render/Fly/Heroku)
@@ -365,16 +372,20 @@ To find the next ticket, run these commands in order:
 # Phase 1 is complete, so check Phase 2 first
 gh issue list --label "phase:2" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
 
-# Current Phase 2 status:
-# - EP-2-T1: ✅ COMPLETED (PR #87)
-# - EP-2-T2: ✅ COMPLETED (PR #101) 
-# - EP-2-T3: 🔄 NEXT (ready for implementation)
-# - EP-2-T4: 🔄 IN REVIEW (PR #100)
+# Current status:
+# - Phase 1-3: ✅ COMPLETED
+# - Phase 4 (Monte Carlo): 🔄 IN PROGRESS - EP-4-T5 in review
+# - Phase 4 (API & UI): ⏳ NEXT - Ready after EP-4-T5
 
-# If Phase 2 is complete, check Phase 3
-gh issue list --label "phase:3" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+# Check for next available ticket in Phase 4 (API & UI)
 gh issue list --label "phase:4" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
-gh issue list --label "phase:5" --state open --exclude-label "status:in-progress" --exclude-label "status:review" --exclude-label "status:completed" --exclude-label "status:blocked"
+
+# Priority order for MVP:
+# 1. EP-11-T3 (Run orchestration endpoint) - Core API
+# 2. EP-11-T2 (CRUD endpoints for Scenario) - Scenario management  
+# 3. EP-MVP-1 (MVP Headless Integration & Validation) - End-to-end testing
+# 4. EP-11-T1 (Auth + RBAC) - Basic security
+# 5. EP-11-T4 (Export endpoints) - Results export
 ```
 
 **Alternative: Check for blocked tickets that might be ready:**
