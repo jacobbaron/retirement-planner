@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [EP-4-T2] Correlated draws via covariance (Cholesky) (v0.19.0)
 - [EP-4-T3] Portfolio evolution w/ annual rebalance (v0.20.0)
 - [EP-4-T4] Withdrawal rules (4% real, fixed %, VPW scaffold) (v0.21.0)
+- [EP-4-T5] Success metrics & percentiles (v0.22.0)
 
 ### Changed
 
