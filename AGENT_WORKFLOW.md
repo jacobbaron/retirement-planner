@@ -52,12 +52,12 @@ This document outlines how Cursor agents can systematically work through the ret
 - ✅ **COMPLETED**: EP-3-T4 (Account balance evolution) - ready for PR
 - ✅ **COMPLETED**: EP-3-T5 (Social Security stub) - ready for PR
 - ✅ **COMPLETED**: EP-3-T6 (Income Engine) - ready for PR
-- **Phase 4 (Monte Carlo Engine)**: 🔄 **IN PROGRESS** - 4/5 tickets completed
+- **Phase 4 (Monte Carlo Engine)**: ✅ **COMPLETED** - 5/5 tickets completed
   - ✅ **COMPLETED**: EP-4-T1 (Random returns generator) - **HIGH PRIORITY FOR MVP**
   - ✅ **COMPLETED**: EP-4-T2 (Correlated draws via covariance) - **HIGH PRIORITY FOR MVP**
   - ✅ **COMPLETED**: EP-4-T3 (Portfolio evolution w/ annual rebalance) - **HIGH PRIORITY FOR MVP**
   - ✅ **COMPLETED**: EP-4-T4 (Withdrawal rules) - **HIGH PRIORITY FOR MVP**
-  - Next: EP-4-T5 (Success metrics & percentiles) - **HIGH PRIORITY FOR MVP**
+  - ✅ **COMPLETED**: EP-4-T5 (Success metrics & percentiles) - **HIGH PRIORITY FOR MVP**
 - **Phase 6 (CI/CD & DevOps)**: 🔄 **IN PROGRESS** - 1/4 tickets completed
   - ✅ **COMPLETED**: EP-16-T1 (Improved CI workflow) - quality gates enforced
   - Next: EP-16-T2 (Containerized deploy)
@@ -96,10 +96,10 @@ This document outlines how Cursor agents can systematically work through the ret
 ### Phase 4: Monte Carlo Engine (MVP PRIORITY)
 **Order 20-24**: Core simulation engine for MVP
 - EP-4-T1: Random returns generator (normal/lognormal selectable) - ✅ **COMPLETED**
-- EP-4-T2: Correlated draws via covariance (Cholesky)
-- EP-4-T3: Portfolio evolution w/ annual rebalance
-- EP-4-T4: Withdrawal rules (4% real, fixed %, VPW scaffold)
-- EP-4-T5: Success metrics & percentiles
+- EP-4-T2: Correlated draws via covariance (Cholesky) - ✅ **COMPLETED**
+- EP-4-T3: Portfolio evolution w/ annual rebalance - ✅ **COMPLETED**
+- EP-4-T4: Withdrawal rules (4% real, fixed %, VPW scaffold) - ✅ **COMPLETED**
+- EP-4-T5: Success metrics & percentiles - ✅ **COMPLETED**
 
 ### Phase 5: API and UI
 **Order 25-32**: User-facing interfaces

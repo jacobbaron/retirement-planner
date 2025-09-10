@@ -147,6 +147,16 @@ gh pr create --title "EP-X-TY: Ticket Title" --body "Implements EP-X-TY
 - Updated AGENT_WORKFLOW.md status and next indicators
 
 Closes #[issue-number]"
+
+# Note: If PR creation fails due to quoting issues in the body, try these solutions:
+# 1. Use --body-file approach:
+#    echo "PR description text" > pr_description.md
+#    gh pr create --title "Title" --body-file pr_description.md
+#    rm pr_description.md
+# 2. Use web interface fallback:
+#    The git push command will output a URL like:
+#    https://github.com/owner/repo/pull/new/feature/branch-name
+#    Use this URL to create the PR via GitHub web interface instead
 ```
 
 ### 6. Verify GitHub Actions CI
