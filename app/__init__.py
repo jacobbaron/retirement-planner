@@ -28,7 +28,9 @@ def create_app(config_name: Optional[str] = None) -> Flask:
 
     # Register blueprints
     from app.blueprints.health import health_bp
+    from app.blueprints.orchestration import orchestration_bp
 
     app.register_blueprint(health_bp)
+    app.register_blueprint(orchestration_bp)
 
     return app

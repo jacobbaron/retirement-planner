@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- [EP-11-T3] Run orchestration endpoint with API endpoints for starting and managing simulation runs
+- [EP-11-T3] OrchestrationService for coordinating deterministic and Monte Carlo simulations
+- [EP-11-T3] API endpoints: POST /api/scenarios/{id}/runs, GET /api/runs/{id}, GET /api/runs/{id}/results
+- [EP-11-T3] Support for both deterministic and Monte Carlo simulation types
+- [EP-11-T3] Comprehensive test suite for orchestration service and API endpoints
 - Project initialization with comprehensive system design blueprint
 - GitHub repository setup with 16 epics and 59 individual tickets
 - Agent workflow framework for systematic development
