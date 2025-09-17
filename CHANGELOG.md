@@ -88,3 +88,6 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - **Phase 5**: API and UI interfaces
 - **Phase 6**: Domain modules and specialized features
 - **Phase 7**: CI/CD & DevOps (moved from Phase 5 to after basic functionality)
+
+- [EP-5-T4] Historical Data Acquisition & Management system (v0.23.0)
+

@@ -102,7 +102,6 @@ This document outlines how Cursor agents can systematically work through the ret
 - EP-4-T5: Success metrics & percentiles - ✅ **COMPLETED**
 
 ### Phase 5: API and UI
-- EP-5-T4: Historical Data Acquisition & Management - ✅ **COMPLETED**
 **Order 25-32**: User-facing interfaces
 - EP-11-T1: Auth (session or token) + RBAC
 - EP-11-T2: CRUD endpoints for Scenario

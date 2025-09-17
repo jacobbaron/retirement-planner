@@ -117,3 +117,37 @@ __all__ = [
     "validate_income_timing",
     "calculate_income_present_value",
 ]
+
+# Historical data imports
+from .historical_data import (
+    AssetClass,
+    CSVSource,
+    DataSourceConfig,
+    FREDSource,
+    HistoricalDataManager,
+    HistoricalDataPoint,
+    HistoricalDataSet,
+    YahooFinanceSource,
+    create_default_asset_classes,
+    create_default_data_sources,
+)
+from .historical_returns_provider import (
+    HistoricalReturnsProvider,
+    create_historical_returns_provider,
+)
+
+# Update __all__ list
+__all__.extend([
+    "AssetClass",
+    "CSVSource",
+    "DataSourceConfig", 
+    "FREDSource",
+    "HistoricalDataManager",
+    "HistoricalDataPoint",
+    "HistoricalDataSet",
+    "YahooFinanceSource",
+    "create_default_asset_classes",
+    "create_default_data_sources",
+    "HistoricalReturnsProvider",
+    "create_historical_returns_provider",
+])
