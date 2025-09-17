@@ -29,6 +29,7 @@ if TYPE_CHECKING:
         TaxCalculator,
         WithdrawalPolicy,
     )
+    from .result import SimulationResult
 
 __all__ = [
     "ReturnsProvider",
@@ -40,4 +41,5 @@ __all__ = [
     "TaxCalculator",
     "PortfolioEngine",
     "SimulationConfig",
+    "SimulationResult",
 ]

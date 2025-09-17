@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- [EP-5-T3] Simulation Result Model for comprehensive output analysis (v2.0.0-alpha.3)
 - [EP-5-T2] Simulation Configuration Model for orchestrator parameters (v2.0.0-alpha.2)
 - [EP-5-T1] Provider Protocol Interfaces for simulation orchestrator (v2.0.0-alpha.1)
 - Project initialization with comprehensive system design blueprint
