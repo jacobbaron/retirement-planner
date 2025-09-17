@@ -1,0 +1,52 @@
+services:
+  # Main Flask application
+  - type: web
+    name: retirement-planner-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    buildCommand: ""
+    startCommand: python wsgi.py
+    healthCheckPath: /healthz
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: STORAGE_TYPE
+        value: local
+      - key: STORAGE_BASE_PATH
+        value: /opt/render/project/src/storage
+      - key: DB_URL
+        fromDatabase:
+          name: retirement-planner-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: retirement-planner-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+    autoDeploy: true
+
+  # PostgreSQL database
+  - type: pserv
+    name: retirement-planner-db
+    env: postgresql
+    plan: free
+    region: oregon
+    ipAllowList: []
+    maxConnections: 97
+
+  # Redis cache
+  - type: redis
+    name: retirement-planner-redis
+    plan: free
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []

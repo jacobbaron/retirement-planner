@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- [EP-16-T2] Containerized deployment with Render platform (v2.0.0-alpha.4)
 - [EP-5-T3] Simulation Result Model for comprehensive output analysis (v2.0.0-alpha.3)
 - [EP-5-T2] Simulation Configuration Model for orchestrator parameters (v2.0.0-alpha.2)
 - [EP-5-T1] Provider Protocol Interfaces for simulation orchestrator (v2.0.0-alpha.1)
@@ -87,3 +88,6 @@ This changelog will be updated by agents as they implement tickets. Each ticket 
 - **Phase 5**: API and UI interfaces
 - **Phase 6**: Domain modules and specialized features
 - **Phase 7**: CI/CD & DevOps (moved from Phase 5 to after basic functionality)
+
+- [EP-5-T4] Historical Data Acquisition & Management system (v0.23.0)
+
