@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     # Import protocols for type checking
+    from .config import SimulationConfig
     from .protocols import (
         ExpenseProvider,
         IncomeProvider,
@@ -38,4 +39,5 @@ __all__ = [
     "RebalancingStrategy",
     "TaxCalculator",
     "PortfolioEngine",
+    "SimulationConfig",
 ]

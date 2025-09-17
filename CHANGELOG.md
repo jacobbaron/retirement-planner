@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- [EP-5-T2] Simulation Configuration Model for orchestrator parameters (v2.0.0-alpha.2)
 - [EP-5-T1] Provider Protocol Interfaces for simulation orchestrator (v2.0.0-alpha.1)
 - Project initialization with comprehensive system design blueprint
 - GitHub repository setup with 16 epics and 59 individual tickets
